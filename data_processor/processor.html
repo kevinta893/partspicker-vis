@@ -1,29 +1,34 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
 
-  <title>Data Processor</title>
-  <meta name="description" content="Data Processor">
-  <meta name="author" content="Kevin Ta">
+	<title>Data Processor</title>
+	<meta name="description" content="Data Processor">
+	<meta name="author" content="Kevin Ta">
 
-  <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="style.css">
+
+	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	<script src="processor.js"></script>
+
 </head>
 
 <body>
-  <script src="processor.js"></script>
-  <div id="input">
-	<h1> Input Data: </h1>
-	<textarea id="datainput" cols="50" rows="50"></textarea>
-	<button id="btnProcess">Process Data</button>
-  </div>
+	<div id="input">
+		<h1> Input Data: </h1>
+		<input type="file" id="input-file">Select a file...</button>
+		<p id="datainput">No input file.</p>
+		<button id="btnProcess">Process Data</button>
+	</div>
 
-  <div id="output">
-	<h1> Output Data: </h1>
-	<p id="dataoutput">
-	
-	</p>
-	
-  </div>
+	<div id="output">
+		<h1> Output Data (preview): </h1>
+		<button id="btnCopy">Download JSON</button>
+		<p id="dataoutput"></p>
+
+	</div>
+  
+
 </body>
 </html>
