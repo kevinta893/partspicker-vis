@@ -45,18 +45,12 @@ var outputString = "";
 function processJSON(jsonString){
 	var allData = JSON.parse(jsonString);
 	
-	outputString = process("blarg", jsonString);
+	outputString = process(allData[0], allData);
 	outputJSON(outputString);
-}
-
-function process(header, values){
-	
-	return values;
 }
 
 function outputJSON(jsonString){
 	$("#dataoutput").text(jsonString.substring(0,5000));
-	
 }
 
 var OUTPUT_FILENAME = "processed.json";
@@ -74,4 +68,29 @@ function downloadJSON(content){
     else {
         pom.click();
     }
+}
+
+function process(header, values){
+	
+	var result = {values:[]};
+	
+	var buildIds = [];
+	
+	//build id table
+	for (var i = 0 ; i < values.length ; i++){
+		buildIds.push(values[i].build_id);
+	}
+	
+	//remove all duplicates
+	buildIds = buildIds.filter(function(item, pos) {
+		return buildIds.indexOf(item) == pos;
+	});
+	
+	return result;
+}
+
+function rowGetPart(row){
+	var part = {type: row["part_type"], name: row["part_name"], price: row["part_price"]};
+	
+	return part;
 }
