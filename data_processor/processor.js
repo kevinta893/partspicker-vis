@@ -34,6 +34,7 @@ $(document).ready(function() {
 		
 		
 	});
+
 });
   
   
@@ -69,10 +70,16 @@ function downloadJSON(content){
 }
 var everything;
 function process(rawData){
-	var allData = [];
-	
 	//format all rows to string arrays
 	rawData = rawData.split('\n');
+	
+	//setup progressBar
+	setupProgressMax([rawData.length])
+	
+	
+	var allData = [];
+	
+	
 	for (var i = 0 ; i< rawData.length ; i++){
 		var row = rawData[i].split(',');
 		
@@ -81,6 +88,7 @@ function process(rawData){
 			row[j] = row[j].substring(1, row[j].length-1);
 		}
 		allData[i] = row;
+		incrementProgress(1);
 	}
 
 	//turn each row array into an associative array row
@@ -91,8 +99,8 @@ function process(rawData){
 			assocRow[header[j]] = allData[i][j];
 		}
 		allData[i] = assocRow;
+		incrementProgress(1);
 	}
-	
 	
 	
 	//now that all rows are in arrays, take the first row to be the header and create associateive arrays
@@ -101,8 +109,9 @@ function process(rawData){
 	var buildIds = [];
 	
 	//build id table
-	for (var i = 0 ; i < allData.length ; i++){
+	for (var i = 1 ; i < allData.length ; i++){		//skip header
 		buildIds.push(allData[i].build_id);
+		incrementProgress(1);
 	}
 	
 	//remove all duplicates
@@ -124,4 +133,29 @@ function rowGetPart(row){
 	var part = {type: row["part_type"], name: row["part_name"], price: row["part_price"]};
 	
 	return part;
+}
+
+
+
+//=========================================================
+//progress bar
+function setupProgressMax(list){
+	//reset current progress
+	progressValue = 0;
+	
+	var totalMax = 0;
+	
+	for (var i = 0 ; i< list.length ; i++){
+		totalMax += list[i];
+	}
+	
+	$("#progressBar").attr("max", totalMax);
+
+}
+
+var progressValue = 0;
+function incrementProgress(num){
+	progressValue += num;
+	$("#progressBar").attr("value", progressValue);
+
 }
