@@ -44,7 +44,7 @@ $(document).ready(function() {
 var outputString = "";
 
 function processData(rawData){
-	outputString = process(rawData);
+	outputString = JSON.stringify(process(rawData));
 	outputJSON(outputString);
 }
 
@@ -68,6 +68,12 @@ function downloadJSON(content){
         pom.click();
     }
 }
+
+
+
+
+//=====================================================
+//processing data
 var everything;
 function process(rawData){
 	//format all rows to string arrays
@@ -119,15 +125,54 @@ function process(rawData){
 		return buildIds.indexOf(item) == pos;
 	});
 	
-	//create objects for each build id
-	for (var i = 0 ; i < buildIds.length ; i++){
-		result.pc_list.push({build_id:buildIds[i]});
+	
+	//get meta about each build id
+	for (var i = 0 ; i < buildIds.length ; i++){		
+		var row = allData.find(function (ele, index){
+			return ele.build_id === buildIds[i];
+		});
+		
+		result.pc_list[i] = {
+			build_id : row.build_id,
+			name : row.name,
+			total_price : row.total_price,
+			date_published : row.date_published,
+			page_num : row.page_num,
+			buildlink_href : row.buildlink_href,
+			parts_list : []
+		};
+		
 	}
+	
+	//gather all the parts for each PC
+	for (var i = 0 ; i < allData.length ; i++){		
+		var pc_row = result.pc_list.find(function (ele, index){			
+			return ele.build_id === allData[i].build_id;
+		});
+		
+		if (!(typeof pc_row === "undefined")){
+			//add the part to the list of parts
+			var row = allData[i];
+			
+			pc_row.parts_list.push({
+				part_type : row.part_type,
+				part_name : row.part_name,
+				part_price : row.part_price,
+				part_price_alt : row.part_price_alt,
+				part_description_href : row.part_description_href
+				
+			});
+		}
+		
+	}
+	
 	
 	everything = result;
 
 	return result;
 }
+
+
 
 function rowGetPart(row){
 	var part = {type: row["part_type"], name: row["part_name"], price: row["part_price"]};
