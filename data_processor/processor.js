@@ -111,7 +111,7 @@ function process(rawData){
 	incrementProgress(1);
 
 	//now that all rows are in arrays, take the first row to be the header and create associateive arrays
-	var result = {pc_list:[]};
+	var result = [];
 	
 	var buildIds = [];
 	
@@ -134,7 +134,7 @@ function process(rawData){
 			return ele.build_id === buildIds[i];
 		});
 		
-		result.pc_list[i] = {
+		result[i] = {
 			build_id : row.build_id,
 			name : row.name,
 			total_price : row.total_price,
@@ -149,7 +149,7 @@ function process(rawData){
 	
 	//gather all the parts for each PC
 	for (var i = 0 ; i < allData.length ; i++){		
-		var pc_row = result.pc_list.find(function (ele, index){			
+		var pc_row = result.find(function (ele, index){			
 			return ele.build_id === allData[i].build_id;
 		});
 		
