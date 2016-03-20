@@ -49,7 +49,7 @@ function processData(rawData){
 }
 
 function outputJSON(jsonString){
-	$("#dataoutput").text(jsonString.substring(0,5000));
+	$("#dataoutput").text(jsonString.length>=5000 ? jsonString.substring(0,5000) + "..." : jsonString);
 }
 
 var OUTPUT_FILENAME = "processed.json";
@@ -80,7 +80,7 @@ function process(rawData){
 	rawData = rawData.split('\n');
 	
 	//setup progressBar
-	setupProgressMax([rawData.length])
+	setupProgressMax([6])
 	
 	
 	var allData = [];
@@ -94,9 +94,11 @@ function process(rawData){
 			row[j] = row[j].substring(1, row[j].length-1);
 		}
 		allData[i] = row;
-		incrementProgress(1);
 	}
+	incrementProgress(1);
 
+	
+	
 	//turn each row array into an associative array row
 	var header = allData[0];
 	for (var i = 0 ; i< allData.length ; i++){
@@ -105,10 +107,9 @@ function process(rawData){
 			assocRow[header[j]] = allData[i][j];
 		}
 		allData[i] = assocRow;
-		incrementProgress(1);
 	}
-	
-	
+	incrementProgress(1);
+
 	//now that all rows are in arrays, take the first row to be the header and create associateive arrays
 	var result = {pc_list:[]};
 	
@@ -117,14 +118,15 @@ function process(rawData){
 	//build id table
 	for (var i = 1 ; i < allData.length ; i++){		//skip header
 		buildIds.push(allData[i].build_id);
-		incrementProgress(1);
 	}
+	incrementProgress(1);
+	
 	
 	//remove all duplicates
 	buildIds = buildIds.filter(function(item, pos) {
 		return buildIds.indexOf(item) == pos;
 	});
-	
+	incrementProgress(1);
 	
 	//get meta about each build id
 	for (var i = 0 ; i < buildIds.length ; i++){		
@@ -143,6 +145,7 @@ function process(rawData){
 		};
 		
 	}
+	incrementProgress(1);
 	
 	//gather all the parts for each PC
 	for (var i = 0 ; i < allData.length ; i++){		
@@ -165,7 +168,7 @@ function process(rawData){
 		}
 		
 	}
-	
+	incrementProgress(1);
 	
 	everything = result;
 
@@ -202,5 +205,5 @@ var progressValue = 0;
 function incrementProgress(num){
 	progressValue += num;
 	$("#progressBar").attr("value", progressValue);
-
+	setTimeout(50);
 }
