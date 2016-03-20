@@ -22,7 +22,7 @@ function displayContents(contents) {
 
 $(document).ready(function() {
 	$("#input-file").on('change', readSingleFile);
-	$("#btnProcess").on('click', function(){ processJSON(readData);});
+	$("#btnProcess").on('click', function(){ processData(readData);});
 
 	$("#btnCopy").on('click', function(){
 		if (outputString.length == 0){
@@ -42,10 +42,8 @@ $(document).ready(function() {
 
 var outputString = "";
 
-function processJSON(jsonString){
-	var allData = JSON.parse(jsonString);
-	
-	outputString = process(allData[0], allData);
+function processData(rawData){
+	outputString = process(rawData);
 	outputJSON(outputString);
 }
 
@@ -69,16 +67,42 @@ function downloadJSON(content){
         pom.click();
     }
 }
-
-function process(header, values){
+var everything;
+function process(rawData){
+	var allData = [];
 	
-	var result = {values:[]};
+	//format all rows to string arrays
+	rawData = rawData.split('\n');
+	for (var i = 0 ; i< rawData.length ; i++){
+		var row = rawData[i].split(',');
+		
+		//clean each row's qoutes
+		for (var j = 0 ; j < row.length ; j++){
+			row[j] = row[j].substring(1, row[j].length-1);
+		}
+		allData[i] = row;
+	}
+
+	//turn each row array into an associative array row
+	var header = allData[0];
+	for (var i = 0 ; i< allData.length ; i++){
+		var assocRow = {};
+		for (var j = 0 ; j < allData[i].length ; j++){
+			assocRow[header[j]] = allData[i][j];
+		}
+		allData[i] = assocRow;
+	}
+	
+	
+	
+	//now that all rows are in arrays, take the first row to be the header and create associateive arrays
+	var result = {pc_list:[]};
 	
 	var buildIds = [];
 	
 	//build id table
-	for (var i = 0 ; i < values.length ; i++){
-		buildIds.push(values[i].build_id);
+	for (var i = 0 ; i < allData.length ; i++){
+		buildIds.push(allData[i].build_id);
 	}
 	
 	//remove all duplicates
@@ -86,6 +110,13 @@ function process(header, values){
 		return buildIds.indexOf(item) == pos;
 	});
 	
+	//create objects for each build id
+	for (var i = 0 ; i < buildIds.length ; i++){
+		result.pc_list.push({build_id:buildIds[i]});
+	}
+	
+	everything = result;
+
 	return result;
 }
 
