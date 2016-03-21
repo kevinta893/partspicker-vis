@@ -22,7 +22,7 @@ var root;
 
 var margin = {
 	top : 50,
-	left: 50,
+	left: 70,
 	bottom: 50,
 	right: 50
 };
@@ -76,15 +76,6 @@ function formatData(data) {
 	
 }
 
-//checks if an a build has a particular part type
-function hasPart(build, part_type){
-	var part = build.parts_list.find(function(ele){
-		return ele.part_type === part_type;
-	});
-	
-	return !(typeof part === "undefined");
-}
-
 function createVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
@@ -135,9 +126,7 @@ function createVis() {
 					height + ")";
 			})
 			.append("circle")
-			.style("fill", "#ff0000")
-			.style("stroke", "#000000")
-			.style("stroke-width", 1);
+			
 }
 
 function updateVis() {
@@ -148,12 +137,21 @@ function updateVis() {
 	yScale.domain([0, maxValY]);
 
 	
+	//check the checkboxes to see if they have changed
+	var gpuEnabled = [
+		$("#gpucheckbox1").is(':checked'),
+		$("#gpucheckbox2").is(':checked'),
+		$("#gpucheckbox3").is(':checked'),
+		$("#gpucheckbox4").is(':checked')
+		];
+		
+		
 	// here we will change the position and radius of each circle
 	root.selectAll(".pc_build").data(build_list)
 		.transition()
 		.duration(1000)
 		.delay(function(d, i){
-			return (i/2)*20;
+			return 0;
 		})
 		.attr("transform", function(d) {
 			//locate the points
@@ -162,11 +160,17 @@ function updateVis() {
 			return "translate(" +
 				xValue + "," + 
 				yValue + ")";
-		})
+		});
+		
+	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.attr("r", function(d) {		
 				//circle radius
 				return pointSize;
+			})
+			.attr("class", function(d){
+				var count = getGPUCount(d);
+				return "gpu" + (gpuEnabled[count-1] == true ? count : "Hidden");
 			});
 
 
@@ -191,33 +195,57 @@ function createButtons() {
 	];
 
 	//create a button group
-	var buttonGroups = d3.select("#buttons").selectAll(".buttonGroup")
-		.data(buttonsData).enter()
+	var buttonGroup = d3.select("#buttons").selectAll(".buttonGroup")
+		.data(buttonsData)
+		.enter()
 		.append("span").attr("class", "buttonGroup");
 	
 
 	//buttonGroups.append("label").html(function(d){return d.name;});
 	
-
-
+	var gpuCheckData = [
+		{id:"gpucheckbox1", label: "1"},
+		{id:"gpucheckbox2", label: "2"},
+		{id:"gpucheckbox3", label: "3"},
+		{id:"gpucheckbox4", label: "4"}
+	];
+	
+	var checkboxGroup = d3.select("#checkboxes").selectAll(".checkboxGroup")
+		.data(gpuCheckData)
+		.enter()
+		.append("label")
+			.html(function (d){
+				return d.label;
+			})
+			.append("input")
+				.attr("class", "gpuCheckbox")
+				.attr("id", function(d){ return d.id;})
+				.attr("type", "checkbox")
+				.attr("checked", "true")
+				.on("change", function(d){
+					updateVis();
+				});			
+	
 }
 
 
 
+//=======================================================
+//pc parts helper functions
 
 
+//checks if an a build has a particular part type
+function hasPart(build, part_type){
+	var part = build.parts_list.find(function(ele){
+		return ele.part_type === part_type;
+	});
+	
+	return !(typeof part === "undefined");
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function getGPUCount(build){
+	var gpuList = build.parts_list.filter(function(ele){
+		return ele.part_type === "Video Card";
+	});
+	return gpuList.length;
+}

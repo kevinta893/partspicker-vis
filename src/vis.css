@@ -1,6 +1,7 @@
 #chart {
 	border: 1px solid black;
-	width: 100%;
+	width: 55%;
+	float: left;
 	background: #f8f8f8;
 }
 
@@ -9,15 +10,10 @@ svg {
 	height: 500px;
 }
 
-rect {
-	fill: #ff8800;
-	stroke: #ff0000;
-}
-
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
 }
 
 .button {
@@ -30,3 +26,29 @@ rect {
 	cursor: pointer;
 }
 
+.gpu1{
+	fill: #2b83ba;
+	stroke: #000000;
+	stroke-width: 1;
+}
+
+.gpu2{
+	fill: #abdda4;
+	stroke: #000000;
+	stroke-width: 1;
+}
+
+.gpu3{
+	fill: #fdae61;
+	stroke: #000000;
+	stroke-width: 1;
+}
+
+.gpu4{
+	fill: #d7191c;
+	stroke: #000000;
+	stroke-width: 1;
+}
+.gpuHidden{
+	visibility: hidden;
+}
