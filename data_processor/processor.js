@@ -2,16 +2,17 @@
 //http://stackoverflow.com/questions/3582671/how-to-open-a-local-disk-file-with-javascript
 
 var readData;
-var readBenchData;
+var readCPUBenchData;
+var readGPUBenchData;
 function readSingleFile(e) {
 	var file = e.target.files[0];
-	console.log(e);
+
 	if (!file) {
 		return;
 	}
 	var reader = new FileReader();
 	
-	var fileType = (e.target.name === "data" ? "data" : "benchmark");
+	var fileType = e.target.name;
 	
 	reader.onload = function(e) {
 		var contents = e.target.result;
@@ -20,8 +21,11 @@ function readSingleFile(e) {
 			readData = contents;
 			$("#datainput").text(contents.length>2000 ? contents.substring(0,2000) + "..." : contents);
 		}
-		else{
-			readBenchData = contents;
+		else if(fileType === "cpu-benchmark"){
+			readCPUBenchData = contents;
+		}
+		else if(fileType === "gpu-benchmark"){
+			readGPUBenchData = contents;
 		}
 	};
 	reader.readAsText(file);
@@ -30,13 +34,15 @@ function readSingleFile(e) {
 
 $(document).ready(function() {
 	$("#input-file").on('change', readSingleFile);
-	$("#input-bench-file").on('change', readSingleFile);
+	$("#input-cpu-bench-file").on('change', readSingleFile);
+	$("#input-gpu-bench-file").on('change', readSingleFile);
+
 	$("#btnProcess").on('click', function(){ 
-		if (typeof readData === "undefined" || typeof readBenchData === "undefined"){
+		if (typeof readData === "undefined" || typeof readCPUBenchData === "undefined" || typeof readGPUBenchData === "undefined"){
 			window.alert("Specfiy both data and benchmark files first!");
 			return;
 		}
-		processData(readData, readBenchData);
+		processData(readData, readCPUBenchData, readGPUBenchData);
 	});
 
 	$("#btnCopy").on('click', function(){
@@ -59,8 +65,9 @@ $(document).ready(function() {
 
 var outputString = "";
 
-function processData(rawData, rawBenchData){
-	processBench(rawBenchData);
+function processData(rawData, rawCPUBenchData, rawGPUBenchData){
+	processCPUBench(rawCPUBenchData);
+	processGPUBench(rawGPUBenchData);
 	
 	outputString = JSON.stringify(process(rawData));
 	outputJSON(outputString);
@@ -95,8 +102,8 @@ function downloadJSON(content){
 
 
 
-var benchDatabase;
-function processBench(rawBenchData){
+var cpuBenchDatabase;
+function processCPUBench(rawBenchData){
 	//format all rows to string array
 	rawBenchData = rawBenchData.split('\n');
 
@@ -124,10 +131,39 @@ function processBench(rawBenchData){
 		allBenchData[i] = assocRow;
 	}
 
-	benchDatabase = allBenchData;
+	cpuBenchDatabase = allBenchData;
 }
+var gpuBenchDatabase;
+function processGPUBench(rawBenchData){
+	//format all rows to string array
+	rawBenchData = rawBenchData.split('\n');
 
+	var allBenchData = [];
 
+	
+	// Remove qoutes from each csv
+	for (var i = 0 ; i< rawBenchData.length ; i++){
+		var row = rawBenchData[i].split(',');
+		
+		//clean each row's qoutes
+		for (var j = 0 ; j < row.length ; j++){
+			row[j] = row[j].substring(1, row[j].length-1);
+		}
+		allBenchData[i] = row;
+	}
+	
+	//turn each row array into an associative array row
+	var header = allBenchData[0];
+	for (var i = 0 ; i< allBenchData.length ; i++){
+		var assocRow = {};
+		for (var j = 0 ; j < allBenchData[i].length ; j++){
+			assocRow[header[j]] = allBenchData[i][j];
+		}
+		allBenchData[i] = assocRow;
+	}
+
+	gpuBenchDatabase = allBenchData;
+}
 
 var everything;
 function process(rawData){
@@ -189,8 +225,8 @@ function process(rawData){
 			return ele.build_id === buildIds[i];
 		});
 		
-		var allCPUs = benchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "CPU")});
-		var allGPUs = benchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "Video Card")});
+		var allCPUs = cpuBenchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "CPU")});
+		var allGPUs = gpuBenchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "Video Card")});
 		
 		
 		result[i] = {
@@ -212,7 +248,7 @@ function process(rawData){
 		//compute the bench scores, add the cpu to the list
 		for (var j = 0 ; j < allCPUs.length ; j++){
 			var obj = allCPUs[j];
-			result[i].total_cpu_score += obj.CPU_Mark;
+			result[i].total_cpu_score += parseInt(obj.CPU_Mark);
 			result[i].cpu_list.push({
 				part_name : obj.part_name,
 				part_price : obj.part_price,
@@ -229,7 +265,7 @@ function process(rawData){
 		//compute the bench scores, add the gpu to the list
 		for (var j = 0 ; j < allGPUs.length ; j++){
 			var obj = allGPUs[j];
-			result[i].total_gpu_score += obj.Passmark_G3D_Mark;
+			result[i].total_gpu_score += parseInt(obj.Passmark_G3D_Mark);
 			result[i].gpu_list.push({
 				part_type : obj.part_type,
 				part_name : obj.part_name,
@@ -273,13 +309,6 @@ function process(rawData){
 	return result;
 }
 
-
-
-function rowGetPart(row){
-	var part = {type: row["part_type"], name: row["part_name"], price: row["part_price"]};
-	
-	return part;
-}
 
 
 
