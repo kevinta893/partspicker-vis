@@ -2,31 +2,47 @@
 //http://stackoverflow.com/questions/3582671/how-to-open-a-local-disk-file-with-javascript
 
 var readData;
+var readBenchData;
 function readSingleFile(e) {
 	var file = e.target.files[0];
+	console.log(e);
 	if (!file) {
 		return;
 	}
 	var reader = new FileReader();
+	
+	var fileType = (e.target.name === "data" ? "data" : "benchmark");
+	
 	reader.onload = function(e) {
 		var contents = e.target.result;
-		displayContents(contents);
+		
+		if (fileType === "data"){
+			readData = contents;
+			$("#datainput").text(contents.length>2000 ? contents.substring(0,2000) + "..." : contents);
+		}
+		else{
+			readBenchData = contents;
+		}
 	};
 	reader.readAsText(file);
 }
 
-function displayContents(contents) {
-	$("#datainput").text(contents.length>2000 ? contents.substring(0,2000) + "..." : contents);
-	readData = contents;
-}
 
 $(document).ready(function() {
 	$("#input-file").on('change', readSingleFile);
-	$("#btnProcess").on('click', function(){ processData(readData);});
+	$("#input-bench-file").on('change', readSingleFile);
+	$("#btnProcess").on('click', function(){ 
+		if (typeof readData === "undefined" || typeof readBenchData === "undefined"){
+			window.alert("Specfiy both data and benchmark files first!");
+			return;
+		}
+		processData(readData, readBenchData);
+	});
 
 	$("#btnCopy").on('click', function(){
 		if (outputString.length == 0){
 			window.alert("Hit the process button first!");
+			return;
 		}
 		else{
 			downloadJSON(outputString);
@@ -43,7 +59,9 @@ $(document).ready(function() {
 
 var outputString = "";
 
-function processData(rawData){
+function processData(rawData, rawBenchData){
+	processBench(rawBenchData);
+	
 	outputString = JSON.stringify(process(rawData));
 	outputJSON(outputString);
 }
@@ -56,7 +74,7 @@ var OUTPUT_FILENAME = "processed.json";
 
 function downloadJSON(content){	
     var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent("var pc_list = " + content + ";"));
     pom.setAttribute('download', OUTPUT_FILENAME);
 
     if (document.createEvent) {
@@ -74,6 +92,43 @@ function downloadJSON(content){
 
 //=====================================================
 //processing data
+
+
+
+var benchDatabase;
+function processBench(rawBenchData){
+	//format all rows to string array
+	rawBenchData = rawBenchData.split('\n');
+
+	var allBenchData = [];
+
+	
+	// Remove qoutes from each csv
+	for (var i = 0 ; i< rawBenchData.length ; i++){
+		var row = rawBenchData[i].split(',');
+		
+		//clean each row's qoutes
+		for (var j = 0 ; j < row.length ; j++){
+			row[j] = row[j].substring(1, row[j].length-1);
+		}
+		allBenchData[i] = row;
+	}
+	
+	//turn each row array into an associative array row
+	var header = allBenchData[0];
+	for (var i = 0 ; i< allBenchData.length ; i++){
+		var assocRow = {};
+		for (var j = 0 ; j < allBenchData[i].length ; j++){
+			assocRow[header[j]] = allBenchData[i][j];
+		}
+		allBenchData[i] = assocRow;
+	}
+
+	benchDatabase = allBenchData;
+}
+
+
+
 var everything;
 function process(rawData){
 	//format all rows to string arrays
@@ -85,7 +140,7 @@ function process(rawData){
 	
 	var allData = [];
 	
-	
+	// Remove qoutes from each csv
 	for (var i = 0 ; i< rawData.length ; i++){
 		var row = rawData[i].split(',');
 		
@@ -134,6 +189,10 @@ function process(rawData){
 			return ele.build_id === buildIds[i];
 		});
 		
+		var allCPUs = benchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "CPU")});
+		var allGPUs = benchDatabase.filter(function(ele, index, arr){return (ele.build_id === buildIds[i]) && (ele.part_type === "Video Card")});
+		
+		
 		result[i] = {
 			build_id : row.build_id,
 			name : row.name,
@@ -141,8 +200,46 @@ function process(rawData){
 			date_published : row.date_published,
 			page_num : row.page_num,
 			buildlink_href : row.buildlink_href,
-			parts_list : []
+			total_cpus : allCPUs.length,
+			total_gpus : allGPUs.length,
+			total_cpu_score : 0,
+			total_gpu_score : 0,
+			parts_list : [],
+			cpu_list : [],
+			gpu_list : []
 		};
+		
+		//compute the bench scores, add the cpu to the list
+		for (var j = 0 ; j < allCPUs.length ; j++){
+			var obj = allCPUs[j];
+			result[i].total_cpu_score += obj.CPU_Mark;
+			result[i].cpu_list.push({
+				part_name : obj.part_name,
+				part_price : obj.part_price,
+				part_price_alt : obj.part_price_alt,
+				part_description_href : obj.part_description_href,
+				CPU_Mark : obj.CPU_Mark,
+				price : obj.price,
+				no_cores : obj.No_of_Cores,
+				socket : obj.Socket,
+				single_thread_mark : obj.Single_Thread_Mark
+			});
+		}
+		
+		//compute the bench scores, add the gpu to the list
+		for (var j = 0 ; j < allGPUs.length ; j++){
+			var obj = allGPUs[j];
+			result[i].total_gpu_score += obj.Passmark_G3D_Mark;
+			result[i].gpu_list.push({
+				part_type : obj.part_type,
+				part_name : obj.part_name,
+				part_price : obj.part_price,
+				part_price_alt : obj.part_price_alt,
+				part_description_href : obj.part_description_href,
+				Passmark_G3D_Mark : obj.Passmark_G3D_Mark,
+				price : obj.Price1
+			});
+		}
 		
 	}
 	incrementProgress(1);
@@ -152,6 +249,7 @@ function process(rawData){
 		var pc_row = result.find(function (ele, index){			
 			return ele.build_id === allData[i].build_id;
 		});
+		
 		
 		if (!(typeof pc_row === "undefined")){
 			//add the part to the list of parts
