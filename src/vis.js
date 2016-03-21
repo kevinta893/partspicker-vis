@@ -43,6 +43,8 @@ var pointSize = 4;
 var min_price = 0;
 var max_price = 10000;
 
+var min_gpu_performance = 1;
+var max_gpu_performance = 50000;
 
 formatData(pc_list);
 createButtons();
@@ -53,8 +55,12 @@ function formatData(data) {
 	build_list = data;
 	
 	//narrow the range of PCs by total price 
-	var showList = build_list.filter(function (ele, index, arr){
+	build_list = build_list.filter(function (ele, index, arr){
 		return (ele.total_price >= min_price) && (ele.total_price <= max_price);
+	});
+	
+	build_list = build_list.filter(function (ele, index, arr){
+		return (ele.total_gpu_score >= min_gpu_performance) && (ele.total_gpu_score <= max_gpu_performance);
 	});
 	
 	//filter out partial builds
@@ -132,7 +138,7 @@ function createVis() {
 function updateVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
-	var maxValY = d3.max(build_list, function (d) { return +d.total_price;});
+	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
 	xScale.domain([0, maxValX]);
 	yScale.domain([0, maxValY]);
 
@@ -156,7 +162,7 @@ function updateVis() {
 		.attr("transform", function(d) {
 			//locate the points
 			var xValue = xScale(d.total_price);
-			var yValue = yScale(d.total_price);
+			var yValue = yScale(d.total_gpu_score);
 			return "translate(" +
 				xValue + "," + 
 				yValue + ")";
@@ -169,7 +175,7 @@ function updateVis() {
 				return pointSize;
 			})
 			.attr("class", function(d){
-				var count = getGPUCount(d);
+				var count = d.total_gpus;
 				return "gpu" + (gpuEnabled[count-1] == true ? count : "Hidden");
 			});
 
