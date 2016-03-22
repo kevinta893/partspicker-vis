@@ -50,6 +50,7 @@ var min_cpu_performance = 1;
 var max_cpu_performance = 500000;
 
 var max_gpu_count = 4;
+var max_cpu_count = 2;
 
 formatData(pc_list);
 createButtons();
@@ -93,6 +94,11 @@ function formatData(data) {
 	//remove builds that have more than MAX gpus
 	build_list = build_list.filter(function (ele, index, arr){
 		return (ele.total_gpus <= max_gpu_count);
+	});
+	
+	//remove builds that have more than MAX cpus
+	build_list = build_list.filter(function (ele, index, arr){
+		return (ele.total_cpus <= max_cpu_count);
 	});
 	
 	
