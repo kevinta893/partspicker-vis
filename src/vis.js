@@ -145,7 +145,27 @@ function createVis() {
 			window.alert("This build id is: " + d.build_id);
 		})
 		.append("circle")
+	
+	//create list of software
+	var softwareItem = d3.select("#software-list").selectAll(".software")
+		.data([
+			{id:"software1", label: "1"},
+			{id:"s0", label: "2"},
+			{id:"s2", label: "3"},
+			{id:"s4", label: "4"}
+		])
+		.enter()
+		.append("li")
+			.attr("class", "software")
 			
+	softwareItem.append("img")
+		.attr("class", "software-icon")
+		.attr("src", "./images/check.png");	
+		
+	softwareItem.append("div")
+		.attr("class", "software-label")
+		.html(function(d){ return d.id;});		
+		
 }
 
 function updateVis() {

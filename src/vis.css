@@ -10,6 +10,28 @@ svg {
 	height: 500px;
 }
 
+#software-list{
+	border: 1px solid black;
+	height:400px; 
+	width:18%;
+	overflow:hidden; 
+	overflow-y:scroll;
+}
+
+.software{
+	padding-left: 1em;
+	
+}
+
+.software-icon{
+	height : 16px;
+	width : 16px;
+	float: left;
+}
+
+.software-label{
+}
+
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
 	fill: none;
 	stroke: #000;
@@ -25,6 +47,9 @@ svg {
 	background: lightgray;
 	cursor: pointer;
 }
+
+
+
 
 .gpu1{
 	fill: #2b83ba;
