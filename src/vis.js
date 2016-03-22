@@ -35,16 +35,16 @@ var yScale = d3.scale.linear().range([height, 0]);
 var xAxis = d3.svg.axis().orient("bottom");
 var yAxis = d3.svg.axis().orient("left");
 
-//asthetic controls
+//Asthetic controls
 var pointSize = 4;
 
 
-//data filters
+//Pre-render data filters
 var min_price = 0;
 var max_price = 10000;
 
 var min_gpu_performance = 1;
-var max_gpu_performance = 50000;
+var max_gpu_performance = 500000;
 
 formatData(pc_list);
 createButtons();
@@ -124,14 +124,17 @@ function createVis() {
 		.enter()
 		.append("g")
 		.attr("class", "pc_build")
-			.attr("transform", function(d) {
-				//locate the points
-				var xValue = xScale(d.total_price);
-				return "translate(" +
-					xValue + "," + 
-					height + ")";
-			})
-			.append("circle")
+		.attr("transform", function(d) {
+			//locate the points
+			var xValue = xScale(d.total_price);
+			return "translate(" +
+				xValue + "," + 
+				height + ")";
+		})
+		.on("click", function(d){
+			window.alert("This build id is: " + d.build_id);
+		})
+		.append("circle")
 			
 }
 
