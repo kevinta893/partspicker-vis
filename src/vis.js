@@ -22,7 +22,7 @@ var root;
 
 var margin = {
 	top : 50,
-	left: 70,
+	left: 90,
 	bottom: 50,
 	right: 50
 };
@@ -37,6 +37,19 @@ var yAxis = d3.svg.axis().orient("left");
 
 //Asthetic controls
 var pointSize = 4;
+
+var X_AXIS_POSITION = {
+	top: 45,
+	left: width/2
+};
+
+var Y_AXIS_POSITION = {
+	top: height/2 + (-50),
+	left: -1 * margin.left
+};
+
+var X_AXIS_LABEL = "Total Price (USD)";
+var Y_AXIS_LABEL = "Passmark 3D Score";
 
 
 //Pre-render data filters
@@ -129,8 +142,7 @@ function createVis() {
 			//create axis labels
 			.append("text")
 			.attr("class", "label")
-			.attr("x", width)
-			.attr("y", -6)
+			.attr("transform", "translate(" + X_AXIS_POSITION.left + "," + X_AXIS_POSITION.top +")")
 			.style("text-anchor", "end");
 
 	// Create Y Axis
@@ -139,7 +151,7 @@ function createVis() {
 		.call(yAxis)
 			.append("text")
 			.attr("class", "label")
-			.attr("transform", "rotate(-90)")
+			.attr("transform", "translate(" + Y_AXIS_POSITION.left + "," + Y_AXIS_POSITION.top + ")rotate(-90)")
 			.attr("y", 6)
 			.attr("dy", ".71em")
 			.style("text-anchor", "end");
@@ -205,7 +217,6 @@ function updateVis() {
 		
 	// here we will change the position and radius of each circle
 	root.selectAll(".pc_build").data(build_list)
-
 		.attr("transform", function(d) {
 			//locate the points
 			var xValue = xScale(d.total_price);
@@ -220,18 +231,18 @@ function updateVis() {
 			.transition()
 			.ease('bounce')
 			.duration(1000)
-			.delay(function(d){
-				return 1000 * d.total_gpus;
+			.delay(function(d, i){
+				return (1000 * d.total_gpus);
 			})
 			.attr("r", function(d) {		
 				//circle radius
 				return gpuEnabled[d.total_gpus-1] == true ? pointSize : 0 ;
 			})
 			.attr("class", function(d){
-				var count = d.total_gpus;
-				if (count > 4) {console.log("Warning: too many GPUs"); console.log(d);}
-				return "gpu" + (gpuEnabled[count-1] == true ? count : "Hidden");
+				if (d.total_gpus > 4) {console.log("Warning: too many GPUs"); console.log(d);}
+				return "gpu" + d.total_gpus;
 			});
+			
 
 
 	// update the scales for the x and y axes
@@ -240,9 +251,9 @@ function updateVis() {
 	
 	// redraw the axis, ticks, and labels
 	root.select(".xAxis").call(xAxis)
-		.select(".label").text("Total Price");
+		.select(".label").text(X_AXIS_LABEL);
 	root.select(".yAxis").call(yAxis)
-		.select(".label").text("Performance");
+		.select(".label").text(Y_AXIS_LABEL);
 }
 function pulse() {
 			var circle = svg.select("circle");
