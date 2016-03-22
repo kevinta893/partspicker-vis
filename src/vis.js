@@ -160,7 +160,8 @@ function createVis() {
 			window.alert("This build id is: " + d.build_id);
 		})
 		.append("circle")
-	
+			.attr("r", 0);
+			
 	//create list of software
 	var softwareItem = d3.select("#software-list").selectAll(".software")
 		.data([
@@ -204,11 +205,7 @@ function updateVis() {
 		
 	// here we will change the position and radius of each circle
 	root.selectAll(".pc_build").data(build_list)
-		.transition()
-		.duration(1000)
-		.delay(function(d, i){
-			return 0;
-		})
+
 		.attr("transform", function(d) {
 			//locate the points
 			var xValue = xScale(d.total_price);
@@ -220,9 +217,15 @@ function updateVis() {
 		
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
+			.transition()
+			.ease('bounce')
+			.duration(1000)
+			.delay(function(d){
+				return 1000 * d.total_gpus;
+			})
 			.attr("r", function(d) {		
 				//circle radius
-				return pointSize;
+				return gpuEnabled[d.total_gpus-1] == true ? pointSize : 0 ;
 			})
 			.attr("class", function(d){
 				var count = d.total_gpus;
@@ -241,7 +244,21 @@ function updateVis() {
 	root.select(".yAxis").call(yAxis)
 		.select(".label").text("Performance");
 }
-
+function pulse() {
+			var circle = svg.select("circle");
+			(function repeat() {
+				circle = circle.transition()
+					.duration(2000)
+					.attr("stroke-width", 20)
+					.attr("r", 10)
+					.transition()
+					.duration(2000)
+					.attr('stroke-width', 0.5)
+					.attr("r", 200)
+					.ease('sine')
+					.each("end", repeat);
+			})();
+		}
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
