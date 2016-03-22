@@ -40,11 +40,15 @@ var pointSize = 4;
 
 
 //Pre-render data filters
-var min_price = 0;
+var min_price = 1;
 var max_price = 10000;
 
 var min_gpu_performance = 1;
 var max_gpu_performance = 500000;
+
+var min_cpu_performance = 1;
+var max_cpu_performance = 500000;
+
 
 formatData(pc_list);
 createButtons();
@@ -59,8 +63,14 @@ function formatData(data) {
 		return (ele.total_price >= min_price) && (ele.total_price <= max_price);
 	});
 	
+	//filter out gpus by performance
 	build_list = build_list.filter(function (ele, index, arr){
 		return (ele.total_gpu_score >= min_gpu_performance) && (ele.total_gpu_score <= max_gpu_performance);
+	});
+	
+	//filter out cpus by performance
+	build_list = build_list.filter(function (ele, index, arr){
+		return (ele.total_cpu_score >= min_cpu_performance) && (ele.total_cpu_score <= max_cpu_performance);
 	});
 	
 	//filter out partial builds
