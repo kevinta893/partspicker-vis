@@ -49,6 +49,7 @@ var max_gpu_performance = 500000;
 var min_cpu_performance = 1;
 var max_cpu_performance = 500000;
 
+var max_gpu_count = 4;
 
 formatData(pc_list);
 createButtons();
@@ -57,6 +58,22 @@ updateVis();
 
 function formatData(data) {
 	build_list = data;
+	
+	//filter out partial builds
+	build_list = build_list.filter(function (ele, index, arr){
+		if (hasPart(ele, "CPU") && 
+			hasPart(ele, "Video Card") && 
+			hasPart(ele, "Motherboard") && 
+			hasPart(ele, "Power Supply") && 
+			hasPart(ele, "Memory") && 
+			hasPart(ele, "Case") && 
+			hasPart(ele, "Storage")){
+				return true;
+			}
+			else {false;}
+
+	});
+	
 	
 	//narrow the range of PCs by total price 
 	build_list = build_list.filter(function (ele, index, arr){
@@ -73,20 +90,12 @@ function formatData(data) {
 		return (ele.total_cpu_score >= min_cpu_performance) && (ele.total_cpu_score <= max_cpu_performance);
 	});
 	
-	//filter out partial builds
+	//remove builds that have more than MAX gpus
 	build_list = build_list.filter(function (ele, index, arr){
-		if (hasPart(ele, "CPU") && 
-			hasPart(ele, "Video Card") && 
-			hasPart(ele, "Motherboard") && 
-			hasPart(ele, "Power Supply") && 
-			hasPart(ele, "Memory") && 
-			hasPart(ele, "Case") && 
-			hasPart(ele, "Storage")){
-				return true;
-			}
-			else {false;}
-
+		return (ele.total_gpus <= max_gpu_count);
 	});
+	
+	
 	console.log("Total complete PCs in Database: " + build_list.length);
 	
 	
