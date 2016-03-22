@@ -211,6 +211,7 @@ function updateVis() {
 			})
 			.attr("class", function(d){
 				var count = d.total_gpus;
+				if (count > 4) {console.log("Warning: too many GPUs"); console.log(d);}
 				return "gpu" + (gpuEnabled[count-1] == true ? count : "Hidden");
 			});
 
