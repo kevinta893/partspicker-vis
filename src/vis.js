@@ -155,8 +155,10 @@ function createVis() {
 			{id:"s4", label: "4"}
 		])
 		.enter()
-		.append("li")
+		.append("div")
 			.attr("class", "software")
+			.append("div")
+				.attr("class", "software-run-min")
 			
 	softwareItem.append("img")
 		.attr("class", "software-icon")

@@ -19,8 +19,29 @@ svg {
 }
 
 .software{
-	padding-left: 1em;
-	
+	height: 30px;
+	border: 1px solid grey;
+}
+
+.software-no-run{
+	height: 100%;
+	width: 100%;
+	padding-left: 0.5em;
+	background-color: #FF5252;
+}
+
+.software-run-min{
+	height: 100%;
+	width: 100%;
+	padding-left: 0.5em;
+	background-color: #FFEB52;
+}
+
+.software-run-rec{	
+	height: 100%;
+	width: 100%;
+	padding-left: 0.5em;
+	background-color: #5AFF52;
 }
 
 .software-icon{
@@ -30,6 +51,7 @@ svg {
 }
 
 .software-label{
+	
 }
 
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
