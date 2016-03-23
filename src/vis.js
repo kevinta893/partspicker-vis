@@ -115,6 +115,22 @@ function formatData(pc_data, software_data) {
 	});
 	
 	
+	//sort by GPU for proper z-order
+	build_list = build_list.sort(function (a,b){
+		
+		//sort in decending (highest to low)
+		if (a.total_gpus < b.total_gpus){
+			return -1;
+		}
+		else if (a.total_gpus > b.total_gpus){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+		return (ele.total_cpus <= max_cpu_count);
+	});
+	
 	console.log("Total complete PCs in Database: " + build_list.length);
 
 	//==================================================
@@ -123,7 +139,7 @@ function formatData(pc_data, software_data) {
 	software_req_list = software_data;
 
 	software_req_list.sort(function(a,b){
-		//combine the total score for minimum requirements from both cpu and gpu
+		//combine the total score for recommended requirements from both cpu and gpu
 		//ignore nulls by setting them to default as zero
 		var totalMinScoreA = (a.rec_cpu_bench == "null" ? 0 : a.rec_cpu_bench) + (a.rec_gpu_bench == "null" ? 0 : a.rec_gpu_bench);
 		var totalMinScoreB = (b.rec_cpu_bench == "null" ? 0 : b.rec_cpu_bench) + (b.rec_gpu_bench == "null" ? 0 : b.rec_gpu_bench);
