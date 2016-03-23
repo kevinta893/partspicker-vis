@@ -1,5 +1,5 @@
 var build_list;
-
+var software_req_list;
 /* this code doesn't quite work because of CORS security restrictions
 // we get around this by importing countries.js
 d3.json("data.json",
@@ -65,13 +65,13 @@ var max_cpu_performance = 500000;
 var max_gpu_count = 4;
 var max_cpu_count = 2;
 
-formatData(pc_list);
+formatData(pc_list, software_list);
 createButtons();
 createVis();
 updateVis();
 
-function formatData(data) {
-	build_list = data;
+function formatData(pc_data, software_data) {
+	build_list = pc_data;
 	
 	//filter out partial builds
 	build_list = build_list.filter(function (ele, index, arr){
@@ -116,7 +116,32 @@ function formatData(data) {
 	
 	
 	console.log("Total complete PCs in Database: " + build_list.length);
+
+	//==================================================
+	//
 	
+	software_req_list = software_data;
+
+	software_req_list.sort(function(a,b){
+		//combine the total score for minimum requirements from both cpu and gpu
+		//ignore nulls by setting them to default as zero
+		var totalMinScoreA = (a.rec_cpu_bench == "null" ? 0 : a.rec_cpu_bench) + (a.rec_gpu_bench == "null" ? 0 : a.rec_gpu_bench);
+		var totalMinScoreB = (b.rec_cpu_bench == "null" ? 0 : b.rec_cpu_bench) + (b.rec_gpu_bench == "null" ? 0 : b.rec_gpu_bench);
+		
+		//sort in decending (highest to low)
+		if (totalMinScoreA < totalMinScoreB){
+			return 1;
+		}
+		else if (totalMinScoreA > totalMinScoreB){
+			return -1;
+		}
+		else{
+			return 0;
+		}
+		
+	});
+	
+	console.log("Total software in Database: " + software_req_list.length);
 	
 }
 
@@ -175,26 +200,20 @@ function createVis() {
 			.attr("r", 0);
 			
 	//create list of software
-	var softwareItem = d3.select("#software-list").selectAll(".software")
-		.data([
-			{id:"software1", label: "1"},
-			{id:"s0", label: "2"},
-			{id:"s2", label: "3"},
-			{id:"s4", label: "4"}
-		])
+	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
 		.enter()
 		.append("div")
 			.attr("class", "software")
 			.append("div")
-				.attr("class", "software-run-min")
+				.attr("class", "software-no-run")
 			
 	softwareItem.append("img")
 		.attr("class", "software-icon")
-		.attr("src", "./images/check.png");	
+		.attr("src", "./images/cross.png");	
 		
 	softwareItem.append("div")
 		.attr("class", "software-label")
-		.html(function(d){ return d.id;});		
+		.html(function(d){ return d.name;});		
 		
 }
 
@@ -212,7 +231,7 @@ function updateVis() {
 		$("#gpucheckbox2").is(':checked'),
 		$("#gpucheckbox3").is(':checked'),
 		$("#gpucheckbox4").is(':checked')
-		];
+	];
 		
 		
 	// here we will change the position and radius of each circle
@@ -229,7 +248,7 @@ function updateVis() {
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.transition()
-			.ease('bounce')
+			.ease('elastic')
 			.duration(1000)
 			.delay(function(d, i){
 				return (1000 * d.total_gpus);
