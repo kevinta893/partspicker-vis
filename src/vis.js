@@ -35,8 +35,11 @@ var yScale = d3.scale.linear().range([height, 0]);
 var xAxis = d3.svg.axis().orient("bottom");
 var yAxis = d3.svg.axis().orient("left");
 
+var firstRun = true;
+
+
 //Asthetic controls
-var pointSize = 4;
+var pointSize = 6;
 
 var X_AXIS_POSITION = {
 	top: 45,
@@ -72,6 +75,13 @@ updateVis();
 
 function formatData(pc_data, software_data) {
 	build_list = pc_data;
+	
+	for (var i = 0; i < build_list.length ; i++){
+		build_list[i].total_price = parseFloat(build_list[i].total_price);
+		build_list[i].total_cpus = parseInt(build_list[i].total_cpus);
+		build_list[i].total_gpus = parseInt(build_list[i].total_gpus);
+		
+	}
 	
 	//filter out partial builds
 	build_list = build_list.filter(function (ele, index, arr){
@@ -115,26 +125,41 @@ function formatData(pc_data, software_data) {
 	});
 	
 	
-	//sort by GPU for proper z-order
+	//sort by total price for entry transition
 	build_list = build_list.sort(function (a,b){
 		
-		//sort in decending (highest to low)
-		if (a.total_gpus < b.total_gpus){
-			return -1;
+		if (a.total_price < b.total_price){
+			//sort in decending (highest to low)
+			if (a.total_gpus < b.total_gpus){
+				return -1;
+			}
+			else if (a.total_gpus > b.total_gpus){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
-		else if (a.total_gpus > b.total_gpus){
-			return 1;
+		else if (a.total_price > b.total_price){
+			//sort in decending (highest to low)
+			if (a.total_gpus < b.total_gpus){
+				return -1;
+			}
+			else if (a.total_gpus > b.total_gpus){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
-		else{
-			return 0;
-		}
-		return (ele.total_cpus <= max_cpu_count);
+		
 	});
+	
 	
 	console.log("Total complete PCs in Database: " + build_list.length);
 
 	//==================================================
-	//
+	//software list data formattting
 	
 	software_req_list = software_data;
 
@@ -233,6 +258,7 @@ function createVis() {
 		
 }
 
+
 function updateVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
@@ -261,13 +287,19 @@ function updateVis() {
 				yValue + ")";
 		});
 		
+		
+	var sd = ["elastic", "bounce"];
+
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.transition()
-			.ease('elastic')
+			.ease("elastic")
 			.duration(1000)
 			.delay(function(d, i){
-				return (1000 * d.total_gpus);
+				if (firstRun === true){
+					return (1500 * d.total_gpus) + (d.total_price/5);
+				}
+				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/5);
 			})
 			.attr("r", function(d) {		
 				//circle radius
@@ -277,7 +309,7 @@ function updateVis() {
 				if (d.total_gpus > 4) {console.log("Warning: too many GPUs"); console.log(d);}
 				return "gpu" + d.total_gpus;
 			});
-			
+	
 
 
 	// update the scales for the x and y axes
@@ -289,22 +321,13 @@ function updateVis() {
 		.select(".label").text(X_AXIS_LABEL);
 	root.select(".yAxis").call(yAxis)
 		.select(".label").text(Y_AXIS_LABEL);
+		
+	//first run of the visualization is now done
+	if (firstRun === true){
+		firstRun = false;
+	}
 }
-function pulse() {
-			var circle = svg.select("circle");
-			(function repeat() {
-				circle = circle.transition()
-					.duration(2000)
-					.attr("stroke-width", 20)
-					.attr("r", 10)
-					.transition()
-					.duration(2000)
-					.attr('stroke-width', 0.5)
-					.attr("r", 200)
-					.ease('sine')
-					.each("end", repeat);
-			})();
-		}
+
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
@@ -332,8 +355,9 @@ function createButtons() {
 	
 	var checkboxGroup = d3.select("#checkboxes").selectAll(".checkboxGroup")
 		.data(gpuCheckData)
-		.enter()
-		.append("label")
+		.enter();
+	
+	checkboxGroup.append("label")
 			.html(function (d){
 				return d.label;
 			})
@@ -344,7 +368,7 @@ function createButtons() {
 				.attr("checked", "true")
 				.on("change", function(d){
 					updateVis();
-				});			
+				});
 	
 }
 
