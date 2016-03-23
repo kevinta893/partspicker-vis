@@ -287,9 +287,7 @@ function updateVis() {
 				yValue + ")";
 		});
 		
-		
-	var sd = ["elastic", "bounce"];
-
+	
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.transition()
@@ -297,9 +295,9 @@ function updateVis() {
 			.duration(1000)
 			.delay(function(d, i){
 				if (firstRun === true){
-					return (1500 * d.total_gpus) + (d.total_price/5);
+					return (750 * d.total_gpus) + (d.total_price/15);
 				}
-				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/5);
+				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/30);
 			})
 			.attr("r", function(d) {		
 				//circle radius
