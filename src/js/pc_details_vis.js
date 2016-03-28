@@ -93,7 +93,7 @@ function initPage(){
 		return;
 	}
 	
-	console.log("Build details for:" + selected_build.build_id);
+	console.log("Showing build details for: " + selected_build.build_id);
 	setupPage(selected_build);
 	
 	
@@ -286,10 +286,7 @@ function formatData(pc_data, software_data) {
 
 function createVis() {
 	// recompute the max value for the x and y and size scales
-	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
-	var maxValY = d3.max(build_list, function (d) { return +d.total_price;});
-	xScale.domain([0, maxValX]);
-	yScale.domain([0, maxValY]);
+	yScale.domain([0, 100]);
 	
 	root = d3.select("#graphics");
 
@@ -297,115 +294,35 @@ function createVis() {
 	root = root.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
-	// Create X Axis
-	root.append("g")
-		.attr("class", "xAxis")
-		.attr("transform", "translate(0," + height + ")")
-		// this is what creates the axis
-		.call(xAxis)
-			//create axis labels
-			.append("text")
-			.attr("class", "label")
-			.attr("transform", "translate(" + X_AXIS_POSITION.left + "," + X_AXIS_POSITION.top +")")
-			.style("text-anchor", "end");
-
-	// Create Y Axis
-	root.append("g")
-		.attr("class", "yAxis")
-		.call(yAxis)
-			.append("text")
-			.attr("class", "label")
-			.attr("transform", "translate(" + Y_AXIS_POSITION.left + "," + Y_AXIS_POSITION.top + ")rotate(-90)")
-			.attr("y", 6)
-			.attr("dy", ".71em")
-			.style("text-anchor", "end");
-		
+	var barVals = generateBarValues(selected_build);
+		console.log(barVals);
 	//create each pc build
-	root.selectAll(".pc").data(build_list)
+	root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
 		.attr("class", "pc_build")
-		.attr("transform", function(d) {
+		.attr("transform", function(d, i) {
 			//locate the points
-			var xValue = xScale(d.total_price);
 			return "translate(" +
-				xValue + "," + 
-				height + ")";
+				i*10 + "," + 
+				0 + ")";
 		})
-		.on("click", function(d){
-			window.alert("This build id is: " + d.build_id);
-		})
-		.append("circle")
-			.attr("r", 0);
+		.append("rect")
+			.attr("width", 10)
+			.attr("height", function(d,i){
+				return yScale(d.percent);
+			});
 			
-	//create list of software
-	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
-		.enter()
-		.append("div")
-			.attr("class", "software")
-			.append("div")
-				.attr("class", "software-no-run")
-			
-	softwareItem.append("img")
-		.attr("class", "software-icon")
-		.attr("src", "./images/cross.png");	
 		
-	softwareItem.append("div")
-		.attr("class", "software-label")
-		.html(function(d){ return d.name;});		
 		
 }
 
 
 function updateVis() {
 	// recompute the max value for the x and y and size scales
-	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
-	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
-	xScale.domain([0, maxValX]);
-	yScale.domain([0, maxValY]);
+	yScale.domain([0, 100]);
 
-	
-	//check the checkboxes to see if they have changed
-	var gpuEnabled = [
-		$("#gpucheckbox1").is(':checked'),
-		$("#gpucheckbox2").is(':checked'),
-		$("#gpucheckbox3").is(':checked'),
-		$("#gpucheckbox4").is(':checked')
-	];
-		
-		
-	// here we will change the position and radius of each circle
-	root.selectAll(".pc_build").data(build_list)
-		.attr("transform", function(d) {
-			//locate the points
-			var xValue = xScale(d.total_price);
-			var yValue = yScale(d.total_gpu_score);
-			return "translate(" +
-				xValue + "," + 
-				yValue + ")";
-		});
-		
-	
-	root.selectAll(".pc_build").data(build_list)
-		.select("circle")
-			.transition()
-			.ease("elastic")
-			.duration(1000)
-			.delay(function(d, i){
-				if (firstRun === true){
-					return (750 * d.total_gpus) + (d.total_price/15);
-				}
-				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/30);
-			})
-			.attr("r", function(d) {		
-				//circle radius
-				return gpuEnabled[d.total_gpus-1] == true ? pointSize : 0 ;
-			})
-			.attr("class", function(d){
-				if (d.total_gpus > 4) {console.log("Warning: too many GPUs"); console.log(d);}
-				return "gpu" + d.total_gpus;
-			});
-	
+
 
 
 	// update the scales for the x and y axes
@@ -433,6 +350,50 @@ function createButtons() {
 
 //=======================================================
 //pc parts helper functions
+
+function generateBarValues(pc){
+	
+	var partsNormalized = [];
+	var parts_list = pc.parts_list;
+	
+	for (var i =0 ; i< parts_list.length ; i++){
+		
+		var exists = partsNormalized.find(function(ele, index, arr){
+			return ele.part_type == parts_list[i].part_type;
+		});
+		
+		
+		var price = parseInt(parts_list[i].part_price);
+		var price_alt = parseInt(parts_list[i].part_price_alt);
+		price_alt = isFinite(price_alt) ? price_alt : 0.0;
+		price = isFinite(price) ? price : price_alt;
+		
+		
+		if (typeof exists ==="undefined"){
+			//undefined, add a new object
+
+			
+			
+			
+			partsNormalized.push({
+				part_type: parts_list[i].part_type,
+				price: price
+			});
+		}
+		else{
+			//exists, increase price
+			exists.price += price
+		}
+	}
+	
+	//normalize all parts to percentage of total price
+	for(var i = 0 ; i < partsNormalized.length ; i++){
+		partsNormalized[i].percent = partsNormalized[i].price / pc.total_price;
+		partsNormalized[i].percent *= 100.0;
+	}
+	
+	return partsNormalized;
+}
 
 
 //checks if an a build has a particular part type
