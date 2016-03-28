@@ -1,4 +1,5 @@
 var build_list;
+var selected_build;
 var software_req_list;
 /* this code doesn't quite work because of CORS security restrictions
 // we get around this by importing countries.js
@@ -18,6 +19,7 @@ d3.json("data.json",
 );
 */
 
+
 var root;
 
 var margin = {
@@ -36,6 +38,8 @@ var xAxis = d3.svg.axis().orient("bottom");
 var yAxis = d3.svg.axis().orient("left");
 
 var firstRun = true;
+
+
 
 
 //Asthetic controls
@@ -68,10 +72,91 @@ var max_cpu_performance = 500000;
 var max_gpu_count = 4;
 var max_cpu_count = 2;
 
-formatData(pc_list, software_list);
-createButtons();
-createVis();
-updateVis();
+
+
+initPage();
+
+
+function initPage(){
+	
+	//format the data
+	formatData(pc_list, software_list);
+	
+	//get the requested buildid
+	selected_build = build_list.find(function(ele,index,arr){
+		return ele.build_id === window.location.search.replace("?", "").split('=')[1];
+	});
+	console.log("Build details for:" + selected_build.build_id);
+	setupPage(selected_build);
+	
+	
+	
+	createButtons();
+	createVis();
+	updateVis();
+}
+
+function setupPage(pc){
+	//add pc name title
+	$("#build-name-header").text("Build Details: " + pc.name);
+	
+	//add pc details
+	var summaryData = [
+		{label: "Name: ", val: pc.name},
+		{label: "Total price: ", val: pc.total_price},
+		{label: "Date published: ", val: pc.date_published},
+		{label: "Name: ", val: pc.name},
+		{label: "Name: ", val: pc.name},
+		{label: "Name: ", val: pc.name}
+	];
+	
+	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
+		.data(summaryData)
+		.enter()
+		.append("div")
+			.attr("class", "summary-detail");
+		
+	summaryList.append("p")
+		.attr("class", "summary-detail-label")
+		.html(function(d) {
+			return d.label;
+		});
+		
+	summaryList.append("p")
+		.attr("class", "summary-detail-value")
+		.html(function(d) {
+			return d.val;
+		});
+	
+	
+	
+	//add all components except Custom
+	var displayList = pc.parts_list.filter(function(ele, index, arr){
+		return !(ele.part_type === "Custom");
+	});
+	
+
+	var pcComponents = d3.select("#component-list").selectAll(".component")
+		.data(displayList)
+		.enter()
+		.append("div")
+			.attr("class", "component");
+		
+	pcComponents.append("p")
+		.attr("class", "component-type")
+		.html(function (d){
+			return d.part_type;
+		});
+		
+	pcComponents.append("p")
+		.attr("class", "component-name")
+		.html(function (d){
+			return d.part_name;
+		});
+		
+}
+
+
 
 function formatData(pc_data, software_data) {
 	build_list = pc_data;
@@ -235,7 +320,7 @@ function createVis() {
 				height + ")";
 		})
 		.on("click", function(d){
-			openDetailWindow(d.build_id);
+			window.alert("This build id is: " + d.build_id);
 		})
 		.append("circle")
 			.attr("r", 0);
@@ -326,55 +411,9 @@ function updateVis() {
 	}
 }
 
-// this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
-	var buttonsData = [
-		{name:"x axis", target: "x"},
-		{name:"y axis", target: "y"},
-		{name:"size", target: "size"}
-	];
-
-	//create a button group
-	var buttonGroup = d3.select("#buttons").selectAll(".buttonGroup")
-		.data(buttonsData)
-		.enter()
-		.append("span").attr("class", "buttonGroup");
 	
-
-	//buttonGroups.append("label").html(function(d){return d.name;});
-	
-	var gpuCheckData = [
-		{id:"gpucheckbox1", label: "1"},
-		{id:"gpucheckbox2", label: "2"},
-		{id:"gpucheckbox3", label: "3"},
-		{id:"gpucheckbox4", label: "4"}
-	];
-	
-	var checkboxGroup = d3.select("#checkboxes").selectAll(".checkboxGroup")
-		.data(gpuCheckData)
-		.enter();
-	
-	checkboxGroup.append("label")
-			.html(function (d){
-				return d.label;
-			})
-			.append("input")
-				.attr("class", "gpuCheckbox")
-				.attr("id", function(d){ return d.id;})
-				.attr("type", "checkbox")
-				.attr("checked", "true")
-				.on("change", function(d){
-					updateVis();
-				});
-	
-}
-
-
-function openDetailWindow(build_id){
-	window.open("./pc_details.html?build_id=" + build_id, 
-			"detail_window" + build_id,
-			'width=800,height=600,toolbar=0,menubar=0,location=1,status=1,scrollbars=1,resizable=0,titlebar=1,left=0,top=0');
 }
 
 
