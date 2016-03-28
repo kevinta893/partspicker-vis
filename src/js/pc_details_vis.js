@@ -300,20 +300,21 @@ function createVis() {
 	root = root.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
-	var barVals = generateBarValues(selected_build);
+	var barVals = categorizeParts(selected_build);
 	barVals.reverse();
 		console.log(barVals);
 	//create each pc build
 	root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
-			.attr("class", "pc_build")
+			.attr("class", "pc-part-bar")
 			.attr("transform", function(d, i) {
 				//locate the points
-				barVals.prev = i==0? 0: barVals.prev;
-				var nextY = i==0 ? height : barVals.prev -((d.percent/100.0) * height);
+				var barHeight = (d.percent/100.0) * height;
+				barVals.prev = i==0? height: barVals.prev;
+				var nextY = barVals.prev-barHeight;
 				barVals.prev = nextY;
-				
+				console.log(d);
 				return ret = "translate(" +
 					0 + "," + 
 					nextY + ")";
@@ -373,23 +374,27 @@ function createButtons() {
 //=======================================================
 //pc parts helper functions
 
-function generateBarValues(pc){
-	
+function categorizeParts(pc){
+	var part_type_list = [
+	"CPU",
+	"Video Card",
+	"Memory",
+	"Motherboard",
+	"Storage",
+	"Power Supply",
+	"Case",
+	"Miscellaneous"
+];
 	var partsNormalized = [];
 	var parts_list = pc.parts_list;
 	
 	
-	//rig the sorting process			
-	partsNormalized.push({part_type: "CPU", price: 0.0});
-	partsNormalized.push({part_type: "Video Card", price: 0.0});
-	partsNormalized.push({part_type: "Memory", price: 0.0});
-	partsNormalized.push({part_type: "Motherboard", price: 0.0});
-	partsNormalized.push({part_type: "Storage", price: 0.0});
-	partsNormalized.push({part_type: "Power Supply", price: 0.0});
-	partsNormalized.push({part_type: "Case", price: 0.0});
+	//rig the sorting process
+	for (var i =0 ; i< part_type_list.length ; i++){	
+		partsNormalized.push({part_type: part_type_list[i], total_price: 0.0});
+	}
 	
-	//accumulate all part prices
-	
+	//accumulate all part prices by type category
 	for (var i =0 ; i< parts_list.length ; i++){
 		
 		var exists = partsNormalized.find(function(ele, index, arr){
@@ -404,21 +409,18 @@ function generateBarValues(pc){
 		
 		
 		if (typeof exists ==="undefined"){
-			//undefined, add a new object
-			partsNormalized.push({
-				part_type: parts_list[i].part_type,
-				price: price
-			});
+			//undefined, add to other category
+			partsNormalized[partsNormalized.length-1].total_price+= price;
 		}
 		else{
 			//exists, increase price
-			exists.price += price
+			exists.total_price += price
 		}
 	}
 	
 	//normalize all parts to percentage of total price
 	for(var i = 0 ; i < partsNormalized.length ; i++){
-		partsNormalized[i].percent = partsNormalized[i].price / pc.total_price;
+		partsNormalized[i].percent = partsNormalized[i].total_price / pc.total_price;
 		partsNormalized[i].percent *= 100.0;
 	}
 	
