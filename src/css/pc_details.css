@@ -22,6 +22,43 @@ svg {
 	overflow-y:scroll;
 }
 
+rect:hover{
+	stroke: #ffff00;
+	stroke-width: 2;
+
+}
+
+.bar-part-type-Storage{
+	fill: #555509
+}
+
+.bar-part-type-CPU{
+	fill: #005509
+
+}
+
+.bar-part-type-Video-Card{
+	fill: #885509
+}
+
+.bar-part-type-Motherboard{
+	fill: #522509
+}
+
+.bar-part-type-Memory{
+	fill: #578609
+}
+
+.bar-part-type-Case{
+	fill: #aaaaaa
+}
+
+.bar-part-type-Power-Supply{
+	fill: #ff00ff
+}
+
+
+
 #software-list{
 	border: 1px solid black;
 	height:400px; 

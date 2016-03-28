@@ -295,23 +295,32 @@ function createVis() {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
 	var barVals = generateBarValues(selected_build);
+	
 		console.log(barVals);
 	//create each pc build
 	root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
-		.attr("class", "pc_build")
-		.attr("transform", function(d, i) {
-			//locate the points
-			return "translate(" +
-				i*10 + "," + 
-				0 + ")";
-		})
-		.append("rect")
-			.attr("width", 10)
-			.attr("height", function(d,i){
-				return yScale(d.percent);
-			});
+			.attr("class", "pc_build")
+			.attr("transform", function(d, i) {
+				//locate the points
+				barVals.prev = i==0? 0: barVals.prev;
+				var nextY = i==0 ? height : barVals.prev -((d.percent/100.0) * height);
+				barVals.prev = nextY;
+				
+				return ret = "translate(" +
+					0 + "," + 
+					nextY + ")";
+			})
+			.append("rect")
+				.attr("width", 20)
+				.attr("height", function(d,i){
+					return (d.percent/100.0) * height;
+				})
+				.attr("class", function(d,i){
+					var type = d.part_type.replace(new RegExp(' ','g'), '-');
+					return "bar-part-type-" + type;
+				});
 			
 		
 		
@@ -391,6 +400,19 @@ function generateBarValues(pc){
 		partsNormalized[i].percent = partsNormalized[i].price / pc.total_price;
 		partsNormalized[i].percent *= 100.0;
 	}
+	
+	//remove put all non essential parts into a different bin
+	
+	//sort in decending order
+	partsNormalized.sort(function(a,b){
+		if(a.percent < b.percent){
+			return -1;
+		}
+		else if(a.percent > b.percent){
+			return 1;
+		}
+		else{return 0;}
+	});
 	
 	return partsNormalized;
 }
