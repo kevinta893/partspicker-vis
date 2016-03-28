@@ -86,6 +86,13 @@ function initPage(){
 	selected_build = build_list.find(function(ele,index,arr){
 		return ele.build_id === window.location.search.replace("?", "").split('=')[1];
 	});
+	
+	//return error and quit when there's no pc selected
+	if (typeof selected_build === "undefined"){
+		$("#build-name-header").text("ERROR! No PC selected.");
+		return;
+	}
+	
 	console.log("Build details for:" + selected_build.build_id);
 	setupPage(selected_build);
 	
@@ -105,9 +112,6 @@ function setupPage(pc){
 		{label: "Name: ", val: pc.name},
 		{label: "Total price: ", val: pc.total_price},
 		{label: "Date published: ", val: pc.date_published},
-		{label: "Name: ", val: pc.name},
-		{label: "Name: ", val: pc.name},
-		{label: "Name: ", val: pc.name}
 	];
 	
 	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
