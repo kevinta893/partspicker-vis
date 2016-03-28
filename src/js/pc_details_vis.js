@@ -24,7 +24,7 @@ var root;
 
 var margin = {
 	top : 50,
-	left: 90,
+	left: 50,
 	bottom: 50,
 	right: 50
 };
@@ -43,7 +43,13 @@ var firstRun = true;
 
 
 //Asthetic controls
-var pointSize = 6;
+var barWidth = 50;
+var dividerLine = {
+	x:100,
+	y:0,
+	width: 3,
+	height: height
+};
 
 var X_AXIS_POSITION = {
 	top: 45,
@@ -295,7 +301,7 @@ function createVis() {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
 	var barVals = generateBarValues(selected_build);
-	
+	barVals.reverse();
 		console.log(barVals);
 	//create each pc build
 	root.selectAll(".pc").data(barVals)
@@ -313,15 +319,22 @@ function createVis() {
 					nextY + ")";
 			})
 			.append("rect")
-				.attr("width", 20)
+				.attr("width", barWidth)
 				.attr("height", function(d,i){
 					return (d.percent/100.0) * height;
 				})
 				.attr("class", function(d,i){
 					var type = d.part_type.replace(new RegExp(' ','g'), '-');
-					return "bar-part-type-" + type;
+					return "stack-bar bar-part-type-" + type;
 				});
 			
+	root.selectAll(".dividerLine").data([{}])
+		.enter()
+		.append("rect")
+		.attr("x", dividerLine.x)
+		.attr("y", dividerLine.y)
+		.attr("width", dividerLine.width)
+		.attr("height", dividerLine.height);
 		
 		
 }
@@ -365,6 +378,18 @@ function generateBarValues(pc){
 	var partsNormalized = [];
 	var parts_list = pc.parts_list;
 	
+	
+	//rig the sorting process			
+	partsNormalized.push({part_type: "CPU", price: 0.0});
+	partsNormalized.push({part_type: "Video Card", price: 0.0});
+	partsNormalized.push({part_type: "Memory", price: 0.0});
+	partsNormalized.push({part_type: "Motherboard", price: 0.0});
+	partsNormalized.push({part_type: "Storage", price: 0.0});
+	partsNormalized.push({part_type: "Power Supply", price: 0.0});
+	partsNormalized.push({part_type: "Case", price: 0.0});
+	
+	//accumulate all part prices
+	
 	for (var i =0 ; i< parts_list.length ; i++){
 		
 		var exists = partsNormalized.find(function(ele, index, arr){
@@ -380,10 +405,6 @@ function generateBarValues(pc){
 		
 		if (typeof exists ==="undefined"){
 			//undefined, add a new object
-
-			
-			
-			
 			partsNormalized.push({
 				part_type: parts_list[i].part_type,
 				price: price
@@ -400,19 +421,6 @@ function generateBarValues(pc){
 		partsNormalized[i].percent = partsNormalized[i].price / pc.total_price;
 		partsNormalized[i].percent *= 100.0;
 	}
-	
-	//remove put all non essential parts into a different bin
-	
-	//sort in decending order
-	partsNormalized.sort(function(a,b){
-		if(a.percent < b.percent){
-			return -1;
-		}
-		else if(a.percent > b.percent){
-			return 1;
-		}
-		else{return 0;}
-	});
 	
 	return partsNormalized;
 }

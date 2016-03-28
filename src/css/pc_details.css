@@ -22,7 +22,7 @@ svg {
 	overflow-y:scroll;
 }
 
-rect:hover{
+.stack-bar:hover{
 	stroke: #ffff00;
 	stroke-width: 2;
 
@@ -34,7 +34,6 @@ rect:hover{
 
 .bar-part-type-CPU{
 	fill: #005509
-
 }
 
 .bar-part-type-Video-Card{
