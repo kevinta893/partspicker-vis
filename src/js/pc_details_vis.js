@@ -112,6 +112,7 @@ function setupPage(pc){
 		{label: "Name: ", val: pc.name},
 		{label: "Total price: ", val: pc.total_price},
 		{label: "Date published: ", val: pc.date_published},
+		{label: "More Information: ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
 	];
 	
 	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
@@ -155,8 +156,16 @@ function setupPage(pc){
 	pcComponents.append("p")
 		.attr("class", "component-name")
 		.html(function (d){
-			return d.part_name;
+			return "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
 		});
+		
+	pcComponents.append("p")
+		.attr("class", "component-price")
+		.html(function (d){
+			
+			return d.part_price;
+		});
+		
 		
 }
 
