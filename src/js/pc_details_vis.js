@@ -44,12 +44,15 @@ var firstRun = true;
 
 //Asthetic controls
 var barWidth = 100;
-var dividerLine = {
-	x:100,
+var divisionLines = [
+{
+	x:115,
 	y:0,
-	width: 3,
-	height: height
-};
+	width: 5,
+	height: height,
+	classAttr: "divider-line"
+}
+];
 
 var X_AXIS_POSITION = {
 	top: 45,
@@ -292,9 +295,9 @@ function formatData(pc_data, software_data) {
 
 function createVis() {
 	createStackedBarChart(selected_build, 0);
-	createStackedBarChart(build_list[601], 130);
-	createStackedBarChart(build_list[503], 250);
-	createStackedBarChart(build_list[405], 370);
+	createStackedBarChart(build_list[601], 200);
+	createStackedBarChart(build_list[503], 320);
+	createStackedBarChart(build_list[405], 440);
 
 	
 	// recompute the max value for the x and y and size scales
@@ -308,13 +311,14 @@ function createVis() {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
 			
-	root.selectAll(".dividerLine").data([{}])
+	root.selectAll(".dividerLine").data(divisionLines)
 		.enter()
 		.append("rect")
-		.attr("x", dividerLine.x)
-		.attr("y", dividerLine.y)
-		.attr("width", dividerLine.width)
-		.attr("height", dividerLine.height);
+		.attr("class", function(d){return d.classAttr;})
+		.attr("x", function(d){return d.x})
+		.attr("y", function(d){return d.y})
+		.attr("width", function(d){return d.width})
+		.attr("height", function(d){return d.height});
 		
 		
 }
@@ -331,19 +335,19 @@ function createStackedBarChart(pc, xPos){
 
 	var barVals = categorizeParts(pc);
 	barVals.reverse();
-		console.log(barVals);
+
 	//create each pc build
 	root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
 			.attr("class", "pc-part-bar")
 			.attr("transform", function(d, i) {
-				//locate the points
+				//locate the points based on previous Y location
 				var barHeight = (d.percent/100.0) * height;
 				barVals.prev = i==0? height: barVals.prev;
 				var nextY = barVals.prev-barHeight;
 				barVals.prev = nextY;
-				console.log(d);
+				
 				return ret = "translate(" +
 					xPos + "," + 
 					nextY + ")";

@@ -374,7 +374,7 @@ function createButtons() {
 function openDetailWindow(build_id){
 	window.open("./pc_details.html?build_id=" + build_id, 
 			"detail_window" + build_id,
-			'width=800,height=600,toolbar=0,menubar=0,location=1,status=1,scrollbars=1,resizable=0,titlebar=1,left=0,top=0');
+			'width=1000,height=800,toolbar=0,menubar=0,location=1,status=1,scrollbars=1,resizable=0,titlebar=1,left=0,top=0');
 }
 
 
