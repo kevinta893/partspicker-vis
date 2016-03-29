@@ -29,7 +29,7 @@ var margin = {
 	right: 50
 };
 var width = 1000 - margin.left * 2;
-var height = 500 - margin.top * 2;
+var height = 600 - margin.top * 2;
 
 var xScale = d3.scale.linear().range([0, width]);
 var yScale = d3.scale.linear().range([height, 0]);
@@ -43,7 +43,7 @@ var firstRun = true;
 
 
 //Asthetic controls
-var barWidth = 50;
+var barWidth = 100;
 var dividerLine = {
 	x:100,
 	y:0,
@@ -292,8 +292,9 @@ function formatData(pc_data, software_data) {
 
 function createVis() {
 	createStackedBarChart(selected_build, 0);
-	createStackedBarChart(selected_build, 70);
-	createStackedBarChart(selected_build, 140);
+	createStackedBarChart(build_list[601], 130);
+	createStackedBarChart(build_list[503], 250);
+	createStackedBarChart(build_list[405], 370);
 
 	
 	// recompute the max value for the x and y and size scales
@@ -328,7 +329,7 @@ function createStackedBarChart(pc, xPos){
 	root = root.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
-	var barVals = categorizeParts(selected_build);
+	var barVals = categorizeParts(pc);
 	barVals.reverse();
 		console.log(barVals);
 	//create each pc build
