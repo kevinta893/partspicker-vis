@@ -353,10 +353,6 @@ function createStackedBarChart(pc, xPos){
 					nextY + ")";
 			})
 			
-	
-	stackedBar.append("text")
-		.attr("class", "text")
-		.text(function(d){return d.part_type;});
 		
 	stackedBar.append("rect")
 		.attr("width", barWidth)
@@ -367,7 +363,10 @@ function createStackedBarChart(pc, xPos){
 			var type = d.part_type.replace(new RegExp(' ','g'), '-');
 			return "stack-bar bar-part-type-" + type;
 		});
-
+		
+	stackedBar.append("text")
+		.attr("class", "text")
+		.text(function(d){return d.part_type;});
 }
 
 function updateVis() {

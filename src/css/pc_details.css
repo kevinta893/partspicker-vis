@@ -29,35 +29,43 @@ svg {
 }
 
 .bar-part-type-CPU{
-	fill: #e41a1c
+	fill: #e41a1c;
+	opacity: 1.0;
 }
 
 .bar-part-type-Video-Card{
-	fill: #377eb8
+	fill: #377eb8;
+	opacity: 1.0;
 }
 
 .bar-part-type-Motherboard{
-	fill: #4daf4a
+	fill: #4daf4a;
+	opacity: 1.0;
 }
 
 .bar-part-type-Memory{
-	fill: #984ea3
+	fill: #984ea3;
+	opacity: 1.0;
 }
 
 .bar-part-type-Storage{
-	fill: #ff7f00
+	fill: #ff7f00;
+	opacity: 1.0;
 }
 
 .bar-part-type-Power-Supply{
-	fill: #ffff33
+	fill: #ffff33;
+	opacity: 1.0;
 }
 
 .bar-part-type-Case{
-	fill: #a65628
+	fill: #a65628;
+	opacity: 1.0;
 }
 
 .bar-part-type-Miscellaneous{
-	fill: #666666
+	fill: #666666;
+	opacity: 1.0;
 }
 
 
