@@ -291,6 +291,34 @@ function formatData(pc_data, software_data) {
 }
 
 function createVis() {
+	createStackedBarChart(selected_build, 0);
+	createStackedBarChart(selected_build, 70);
+	createStackedBarChart(selected_build, 140);
+
+	
+	// recompute the max value for the x and y and size scales
+	yScale.domain([0, 100]);
+	
+	root = d3.select("#graphics");
+
+	
+	//start of chart, top left
+	root = root.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
+
+			
+	root.selectAll(".dividerLine").data([{}])
+		.enter()
+		.append("rect")
+		.attr("x", dividerLine.x)
+		.attr("y", dividerLine.y)
+		.attr("width", dividerLine.width)
+		.attr("height", dividerLine.height);
+		
+		
+}
+
+function createStackedBarChart(pc, xPos){
 	// recompute the max value for the x and y and size scales
 	yScale.domain([0, 100]);
 	
@@ -316,7 +344,7 @@ function createVis() {
 				barVals.prev = nextY;
 				console.log(d);
 				return ret = "translate(" +
-					0 + "," + 
+					xPos + "," + 
 					nextY + ")";
 			})
 			.append("rect")
@@ -328,18 +356,7 @@ function createVis() {
 					var type = d.part_type.replace(new RegExp(' ','g'), '-');
 					return "stack-bar bar-part-type-" + type;
 				});
-			
-	root.selectAll(".dividerLine").data([{}])
-		.enter()
-		.append("rect")
-		.attr("x", dividerLine.x)
-		.attr("y", dividerLine.y)
-		.attr("width", dividerLine.width)
-		.attr("height", dividerLine.height);
-		
-		
 }
-
 
 function updateVis() {
 	// recompute the max value for the x and y and size scales
