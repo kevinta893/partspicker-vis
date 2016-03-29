@@ -83,21 +83,46 @@ function formatData(pc_data, software_data) {
 		
 	}
 	
+	var part_type_list_required = [
+		"CPU",
+		"Video Card",
+		"Memory",
+		"Motherboard",
+		"Storage",
+		"Power Supply",
+		"Case"
+	];
+	
 	//filter out partial builds
 	build_list = build_list.filter(function (ele, index, arr){
-		if (hasPart(ele, "CPU") && 
-			hasPart(ele, "Video Card") && 
-			hasPart(ele, "Motherboard") && 
-			hasPart(ele, "Power Supply") && 
-			hasPart(ele, "Memory") && 
-			hasPart(ele, "Case") && 
-			hasPart(ele, "Storage")){
-				return true;
+		for(var i =0; i < part_type_list_required.length ; i++){
+			if (hasPart(ele, part_type_list_required[i]) == false){
+				return false;
 			}
-			else {false;}
+		}
 
+		return true;
 	});
 	
+	
+	//filter out builds with parts with missing prices
+	build_list = build_list.filter(function (ele, index, arr){
+		var partsList = ele.parts_list;
+		for (var i =0 ; i < partsList.length ; i++){
+			if (typeof part_type_list_required.find(function (ele){
+					return partsList[i].part_type == ele;
+			}) !="undefined"){
+				//Is a required part, now check if the price is valid
+				if (isFinite(parseInt(partsList[i].part_price)) || isFinite(parseInt(partsList[i].part_price_alt))){}
+				else{ return false;}
+			}
+		}
+
+		return true;
+			
+
+	});
+	//*/
 	
 	//narrow the range of PCs by total price 
 	build_list = build_list.filter(function (ele, index, arr){
@@ -156,7 +181,7 @@ function formatData(pc_data, software_data) {
 	});
 	
 	
-	console.log("Total complete PCs in Database: " + build_list.length);
+	console.log("Total complete & valid PCs in Database: " + build_list.length);
 
 	//==================================================
 	//software list data formattting
