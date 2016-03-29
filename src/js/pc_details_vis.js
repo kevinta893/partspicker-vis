@@ -337,7 +337,7 @@ function createStackedBarChart(pc, xPos){
 	barVals.reverse();
 
 	//create each pc build
-	root.selectAll(".pc").data(barVals)
+	var stackedBar = root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
 			.attr("class", "pc-part-bar")
@@ -352,15 +352,22 @@ function createStackedBarChart(pc, xPos){
 					xPos + "," + 
 					nextY + ")";
 			})
-			.append("rect")
-				.attr("width", barWidth)
-				.attr("height", function(d,i){
-					return (d.percent/100.0) * height;
-				})
-				.attr("class", function(d,i){
-					var type = d.part_type.replace(new RegExp(' ','g'), '-');
-					return "stack-bar bar-part-type-" + type;
-				});
+			
+	
+	stackedBar.append("text")
+		.attr("class", "text")
+		.text(function(d){return d.part_type;});
+		
+	stackedBar.append("rect")
+		.attr("width", barWidth)
+		.attr("height", function(d,i){
+			return (d.percent/100.0) * height;
+		})
+		.attr("class", function(d,i){
+			var type = d.part_type.replace(new RegExp(' ','g'), '-');
+			return "stack-bar bar-part-type-" + type;
+		});
+
 }
 
 function updateVis() {
