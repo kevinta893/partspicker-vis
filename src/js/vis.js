@@ -105,7 +105,7 @@ function formatData(pc_data, software_data) {
 	});
 	
 	
-	///*
+	/*
 	//filter out builds with parts with missing prices
 	build_list = build_list.filter(function (ele, index, arr){
 		var partsList = ele.parts_list;
