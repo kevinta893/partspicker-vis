@@ -242,10 +242,10 @@ function setupPage(pc){
 	
 	//add pc details
 	var summaryData = [
-		{label: "Name: ", val: pc.name},
-		{label: "Total price: ", val: pc.total_price},
-		{label: "Date published: ", val: pc.date_published},
-		{label: "More Information: ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
+		{label: "Name ", val: pc.name},
+		{label: "Total price ", val: "$" + pc.total_price},
+		{label: "Date published ", val: pc.date_published},
+		{label: "Build Blog ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
 	];
 	
 	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
@@ -254,13 +254,13 @@ function setupPage(pc){
 		.append("div")
 			.attr("class", "summary-detail");
 		
-	summaryList.append("p")
+	summaryList.append("div")
 		.attr("class", "summary-detail-label")
 		.html(function(d) {
 			return d.label;
 		});
 		
-	summaryList.append("p")
+	summaryList.append("div")
 		.attr("class", "summary-detail-value")
 		.html(function(d) {
 			return d.val;
@@ -304,19 +304,19 @@ function setupPage(pc){
 				return "component component-type-" + type;
 			});
 	
-	pcComponents.append("p")
+	pcComponents.append("div")
 		.attr("class", "component-type-label")
 		.html(function (d){
 			return d.part_type;
 		});
 		
-	pcComponents.append("p")
+	pcComponents.append("div")
 		.attr("class", "component-price-label")
 		.html(function (d){
 			return "$" + d.part_price;
 		});	
 		
-	pcComponents.append("p")
+	pcComponents.append("div")
 		.attr("class", "component-name-label")
 		.html(function (d){
 			return d.part_name == "null" ? "Null" : "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
