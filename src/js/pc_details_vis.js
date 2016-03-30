@@ -121,90 +121,6 @@ function initPage(){
 	updateVis();
 }
 
-function setupPage(pc){
-	//add pc name title
-	$("#build-name-header").text("Build Details: " + pc.name);
-	
-	//add pc details
-	var summaryData = [
-		{label: "Name: ", val: pc.name},
-		{label: "Total price: ", val: pc.total_price},
-		{label: "Date published: ", val: pc.date_published},
-		{label: "More Information: ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
-	];
-	
-	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
-		.data(summaryData)
-		.enter()
-		.append("div")
-			.attr("class", "summary-detail");
-		
-	summaryList.append("p")
-		.attr("class", "summary-detail-label")
-		.html(function(d) {
-			return d.label;
-		});
-		
-	summaryList.append("p")
-		.attr("class", "summary-detail-value")
-		.html(function(d) {
-			return d.val;
-		});
-	
-	
-	
-	//add all components except Custom
-	var displayList = pc.parts_list;
-	
-	//priority sort by part type
-	
-	//assign priorities
-	for (var i = 0 ; i< displayList.length ; i++){
-		displayList[i].priority = part_type_list.indexOf(displayList[i].part_type);
-		displayList[i].priority = displayList[i].priority == -1 ? 10000 : displayList[i].priority;		//put other parts last
-	}
-	
-	displayList = displayList.sort(function(a,b) {
-		if (a.priority > b.priority){
-			return 1;
-		}
-		else if (a.priority < b.priority){
-			return -1;
-		}
-		else {
-			return 0;
-		}
-	});
-
-	var pcComponents = d3.select("#component-list").selectAll(".component")
-		.data(displayList)
-		.enter()
-		.append("div")
-			.attr("class", "component");
-		
-	pcComponents.append("p")
-		.attr("class", "component-type")
-		.html(function (d){
-			return d.part_type;
-		});
-		
-	pcComponents.append("p")
-		.attr("class", "component-name")
-		.html(function (d){
-			return d.part_name == "null" ? "Null" : "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
-		});
-		
-	pcComponents.append("p")
-		.attr("class", "component-price")
-		.html(function (d){
-			
-			return d.part_price;
-		});
-		
-		
-}
-
-
 
 function formatData(pc_data, software_data) {
 	build_list = pc_data;
@@ -318,6 +234,99 @@ function formatData(pc_data, software_data) {
 	console.log("Total software in Database: " + software_req_list.length);
 	
 }
+
+
+function setupPage(pc){
+	//add pc name title
+	$("#build-name-header").text("Build Details: " + pc.name);
+	
+	//add pc details
+	var summaryData = [
+		{label: "Name: ", val: pc.name},
+		{label: "Total price: ", val: pc.total_price},
+		{label: "Date published: ", val: pc.date_published},
+		{label: "More Information: ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
+	];
+	
+	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
+		.data(summaryData)
+		.enter()
+		.append("div")
+			.attr("class", "summary-detail");
+		
+	summaryList.append("p")
+		.attr("class", "summary-detail-label")
+		.html(function(d) {
+			return d.label;
+		});
+		
+	summaryList.append("p")
+		.attr("class", "summary-detail-value")
+		.html(function(d) {
+			return d.val;
+		});
+	
+	
+	
+	//add all components except Custom
+	var displayList = pc.parts_list;
+	
+	//priority sort by part type
+	
+	//assign priorities
+	for (var i = 0 ; i< displayList.length ; i++){
+		displayList[i].priority = part_type_list.indexOf(displayList[i].part_type);
+		displayList[i].priority = displayList[i].priority == -1 ? 10000 : displayList[i].priority;		//put other parts last
+		if (displayList[i].part_type == "Custom"){displayList[i].priority = 20000;}						//custom parts very last
+	}
+	
+	displayList = displayList.sort(function(a,b) {
+		if (a.priority > b.priority){
+			return 1;
+		}
+		else if (a.priority < b.priority){
+			return -1;
+		}
+		else {
+			return 0;
+		}
+	});
+
+	var pcComponents = d3.select("#component-list").selectAll(".component")
+		.data(displayList)
+		.enter()
+		.append("div")
+			.attr("class", function(d){
+				if (part_type_list.indexOf(d.part_type) == -1){
+					return "component component-type-Miscellaneous";
+				}
+				var type = d.part_type.replace(new RegExp(' ','g'), '-');
+				return "component component-type-" + type;
+			});
+	
+	pcComponents.append("p")
+		.attr("class", "component-type-label")
+		.html(function (d){
+			return d.part_type;
+		});
+		
+	pcComponents.append("p")
+		.attr("class", "component-price-label")
+		.html(function (d){
+			return "$" + d.part_price;
+		});	
+		
+	pcComponents.append("p")
+		.attr("class", "component-name-label")
+		.html(function (d){
+			return d.part_name == "null" ? "Null" : "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
+		});
+		
+
+		
+		
+}
+
 
 function createVis() {
 	createStackedBarChart(selected_build, 0);

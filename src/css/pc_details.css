@@ -1,3 +1,11 @@
+body{
+	width: 100%;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+	margin-bottom:0;
+}
+
 #chart {
 	border: 1px solid black;
 	width: 70%;
@@ -13,14 +21,79 @@ svg {
 #sidebar{
 	width: 250px;
 	height: 600px;
-	float:left;
+	float: left;
 }
 
 #detail-list{
 	height: 600px;
-	overflow:hidden; 
-	overflow-y:scroll;
+	overflow: hidden; 
+	overflow-y: scroll;
 }
+
+#component-list{
+	position: relative;
+	width: 100%;
+}
+
+.component{
+	width: 100%;
+	font-family: "Times New Roman";
+	border: 1px solid grey;
+}
+
+.component-type-label{
+	font-weight: bold;
+}
+
+.component-name-label{
+	float: none;
+	word-wrap: break-word;
+	text-decoration: none;
+}
+
+.component-name-label>a{
+	text-decoration: none;
+}
+
+.component-name-label>a:hover{
+	float: none;
+	word-wrap: break-word;
+	text-decoration: underline;
+}
+
+.component-price-label{
+	float: right;
+	width: 25%;
+	padding-left: 0.5em;
+	font-weight: bold;
+
+}
+
+.component-type-CPU{
+	background-color: #e41a1c;
+}
+.component-type-Video-Card{
+	background-color: #377eb8;
+}
+.component-type-Motherboard{
+	background-color: #4daf4a;
+}
+.component-type-Memory{
+	background-color: #984ea3;
+}
+.component-type-Storage{
+	background-color: #ff7f00;
+}
+.component-type-Power-Supply{
+	background-color: #ffff33;
+}
+.component-type-Case{
+	background-color: #a65628;
+}
+.component-type-Miscellaneous{
+	background-color: #666666;
+}
+
 
 .stack-bar:hover{
 	stroke: #ffff00;
@@ -28,7 +101,7 @@ svg {
 
 }
 
-.bar-part-type-CPU{
+.bar-part-type-CPU {
 	fill: #e41a1c;
 	opacity: 1.0;
 }
@@ -68,117 +141,9 @@ svg {
 	opacity: 1.0;
 }
 
-
-#software-list{
-	border: 1px solid black;
-	height:400px; 
-	width:18%;
-	overflow:hidden; 
-	overflow-y:scroll;
-}
-
-.software{
-	height: 30px;
-	border: 1px solid grey;
-}
-
-.software-no-run{
-	height: 100%;
-	width: 100%;
-	padding-left: 0.5em;
-	background-color: #FF5252;
-}
-
-.software-run-min{
-	height: 100%;
-	width: 100%;
-	padding-left: 0.5em;
-	background-color: #FFEB52;
-}
-
-.software-run-rec{	
-	height: 100%;
-	width: 100%;
-	padding-left: 0.5em;
-	background-color: #5AFF52;
-}
-
-.software-icon{
-	height : 16px;
-	width : 16px;
-	float: left;
-}
-
-.software-label{
-	
-}
-
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
 	fill: none;
 	stroke: #000;
 	shape-rendering: crispEdges;
 }
 
-.button {
-	margin: 10px;
-	border: 1px dashed lightgray;
-}
-
-.button:hover {
-	background: lightgray;
-	cursor: pointer;
-}
-
-
-
-
-.gpu1{
-	fill: #2b83ba;
-	stroke: #000000;
-	stroke-width: 1;
-}
-.gpu1:hover{
-	fill: #2b83ba;
-	stroke: #ffff00;
-	stroke-width: 2;
-}
-
-.gpu2{
-	fill: #abdda4;
-	stroke: #000000;
-	stroke-width: 1;
-}
-
-.gpu2:hover{
-	fill: #abdda4;
-	stroke: #ffff00;
-	stroke-width: 2;
-}
-
-.gpu3{
-	fill: #fdae61;
-	stroke: #000000;
-	stroke-width: 1;
-}
-
-.gpu3:hover{
-	fill: #fdae61;
-	stroke: #ffff00;
-	stroke-width: 2;
-}
-
-.gpu4{
-	fill: #d7191c;
-	stroke: #000000;
-	stroke-width: 1;
-}
-
-.gpu4:hover{
-	fill: #d7191c;
-	stroke: #ffff00;
-	stroke-width: 2;
-}
-
-.gpuHidden{
-	visibility: hidden;
-}
