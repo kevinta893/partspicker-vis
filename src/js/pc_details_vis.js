@@ -53,6 +53,8 @@ var part_type_list = [
 
 //Asthetic controls
 var barWidth = 100;
+var MAX_RELATED_BUILDS_SHOW = 3;
+
 var divisionLines = [
 {
 	x:115,
@@ -75,6 +77,8 @@ var Y_AXIS_POSITION = {
 
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
+
+
 
 
 //Pre-render data filters
@@ -178,29 +182,12 @@ function formatData(pc_data, software_data) {
 	build_list = build_list.sort(function (a,b){
 		
 		if (a.total_price < b.total_price){
-			//sort in decending (highest to low)
-			if (a.total_gpus < b.total_gpus){
-				return -1;
-			}
-			else if (a.total_gpus > b.total_gpus){
-				return 1;
-			}
-			else{
-				return 0;
-			}
+			return -1;
 		}
 		else if (a.total_price > b.total_price){
-			//sort in decending (highest to low)
-			if (a.total_gpus < b.total_gpus){
-				return -1;
-			}
-			else if (a.total_gpus > b.total_gpus){
-				return 1;
-			}
-			else{
-				return 0;
-			}
+			return 1;
 		}
+		return 0;
 		
 	});
 	
@@ -329,11 +316,22 @@ function setupPage(pc){
 
 
 function createVis() {
-	createStackedBarChart(selected_build, 0);
-	createStackedBarChart(build_list[158], 200);
-	createStackedBarChart(build_list[503], 320);
-	createStackedBarChart(build_list[405], 440);
-
+	//get related builds to the selected build
+	var relatedBuilds = build_list.filter(function(ele, index, arr) {
+		var min = selected_build.total_price-1000;
+		var max = selected_build.total_price+1000;
+		return (ele.total_price >= min) && (ele.total_price <= max)
+	});
+	
+	
+	
+	createStackedBarChart(selected_build, 0);		//make selected build bar chart
+	
+	
+	//create stacked bar charts for each related build
+	for (var i = 0; i < Math.min(relatedBuilds.length, MAX_RELATED_BUILDS_SHOW) ; i++){
+		createStackedBarChart(relatedBuilds[i], 200 + (i*120));
+	}
 	
 	// recompute the max value for the x and y and size scales
 	yScale.domain([0, 100]);
