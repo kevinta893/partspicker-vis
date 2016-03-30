@@ -39,7 +39,16 @@ var yAxis = d3.svg.axis().orient("left");
 
 var firstRun = true;
 
-
+var part_type_list = [
+	"CPU",
+	"Video Card",
+	"Memory",
+	"Motherboard",
+	"Storage",
+	"Power Supply",
+	"Case",
+	"Miscellaneous"
+];
 
 
 //Asthetic controls
@@ -147,6 +156,25 @@ function setupPage(pc){
 	//add all components except Custom
 	var displayList = pc.parts_list;
 	
+	//priority sort by part type
+	
+	//assign priorities
+	for (var i = 0 ; i< displayList.length ; i++){
+		displayList[i].priority = part_type_list.indexOf(displayList[i].part_type);
+		displayList[i].priority = displayList[i].priority == -1 ? 10000 : displayList[i].priority;		//put other parts last
+	}
+	
+	displayList = displayList.sort(function(a,b) {
+		if (a.priority > b.priority){
+			return 1;
+		}
+		else if (a.priority < b.priority){
+			return -1;
+		}
+		else {
+			return 0;
+		}
+	});
 
 	var pcComponents = d3.select("#component-list").selectAll(".component")
 		.data(displayList)
@@ -401,16 +429,7 @@ function createButtons() {
 //pc parts helper functions
 
 function categorizeParts(pc){
-	var part_type_list = [
-		"CPU",
-		"Video Card",
-		"Memory",
-		"Motherboard",
-		"Storage",
-		"Power Supply",
-		"Case",
-		"Miscellaneous"
-	];
+
 	var partsNormalized = [];
 	var parts_list = pc.parts_list;
 	
