@@ -145,9 +145,7 @@ function setupPage(pc){
 	
 	
 	//add all components except Custom
-	var displayList = pc.parts_list.filter(function(ele, index, arr){
-		return !(ele.part_type === "Custom");
-	});
+	var displayList = pc.parts_list;
 	
 
 	var pcComponents = d3.select("#component-list").selectAll(".component")
@@ -165,7 +163,7 @@ function setupPage(pc){
 	pcComponents.append("p")
 		.attr("class", "component-name")
 		.html(function (d){
-			return "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
+			return d.part_name == "null" ? "Null" : "<a href=\"" + d.part_description_href + "\" target=\"_blank\">" + d.part_name + "</a>";
 		});
 		
 	pcComponents.append("p")
@@ -404,15 +402,15 @@ function createButtons() {
 
 function categorizeParts(pc){
 	var part_type_list = [
-	"CPU",
-	"Video Card",
-	"Memory",
-	"Motherboard",
-	"Storage",
-	"Power Supply",
-	"Case",
-	"Miscellaneous"
-];
+		"CPU",
+		"Video Card",
+		"Memory",
+		"Motherboard",
+		"Storage",
+		"Power Supply",
+		"Case",
+		"Miscellaneous"
+	];
 	var partsNormalized = [];
 	var parts_list = pc.parts_list;
 	
