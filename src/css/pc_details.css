@@ -73,6 +73,8 @@ svg {
 	width: 100%;
 	font-family: "Times New Roman";
 	border: 1px solid grey;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 .component-type-label{
