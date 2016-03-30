@@ -404,7 +404,11 @@ function createStackedBarChart(pc, xPos){
 		.attr("class", function(d,i){
 			var type = d.part_type.replace(new RegExp(' ','g'), '-');
 			return "stack-bar bar-part-type-" + type;
-		});
+		})
+		.append("title")
+			.html(function(d){
+				return parseFloat(d.percent).toFixed(2) + "%";
+			});
 
 }
 
