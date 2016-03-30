@@ -32,9 +32,8 @@ svg {
 	overflow-y: scroll;
 }
 
-#component-list{
-	position: relative;
-	width: 100%;
+#details-summary{
+	
 }
 
 .summary-detail{
@@ -45,16 +44,13 @@ svg {
 	padding-bottom: 0.5em;
 
 }
-
 .summary-detail-label{
 	font-weight: bold;
 }
-
 .summary-detail-value{
 	padding-top: 0.2em;
 
 }
-
 .summary-detail-value>a{
 	padding: 0.2em;
 	-webkit-appearance: button;
@@ -69,6 +65,11 @@ svg {
 
 
 
+#component-list{
+	position: relative;
+	width: 100%;
+}
+
 .component{
 	width: 100%;
 	font-family: "Times New Roman";
@@ -76,27 +77,22 @@ svg {
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 }
-
 .component-type-label{
 	font-weight: bold;
 }
-
 .component-name-label{
 	float: none;
 	word-wrap: break-word;
 	text-decoration: none;
 }
-
 .component-name-label>a{
 	text-decoration: none;
 }
-
 .component-name-label>a:hover{
 	float: none;
 	word-wrap: break-word;
 	text-decoration: underline;
 }
-
 .component-price-label{
 	float: right;
 	width: 25%;
@@ -131,32 +127,30 @@ svg {
 }
 
 
+
+
+
+
 .stack-bar:hover{
 	stroke: #ffff00;
 	stroke-width: 2;
-
 }
-
 .bar-part-type-CPU {
 	fill: #e41a1c;
 	opacity: 1.0;
 }
-
 .bar-part-type-Video-Card{
 	fill: #377eb8;
 	opacity: 1.0;
 }
-
 .bar-part-type-Motherboard{
 	fill: #4daf4a;
 	opacity: 1.0;
 }
-
 .bar-part-type-Memory{
 	fill: #984ea3;
 	opacity: 1.0;
 }
-
 .bar-part-type-Storage{
 	fill: #ff7f00;
 	opacity: 1.0;
@@ -166,16 +160,16 @@ svg {
 	fill: #ffff33;
 	opacity: 1.0;
 }
-
 .bar-part-type-Case{
 	fill: #a65628;
 	opacity: 1.0;
 }
-
 .bar-part-type-Miscellaneous{
 	fill: #666666;
 	opacity: 1.0;
 }
+
+
 
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
 	fill: none;
