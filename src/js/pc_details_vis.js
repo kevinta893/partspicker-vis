@@ -321,7 +321,7 @@ function formatData(pc_data, software_data) {
 
 function createVis() {
 	createStackedBarChart(selected_build, 0);
-	createStackedBarChart(build_list[601], 200);
+	createStackedBarChart(build_list[158], 200);
 	createStackedBarChart(build_list[503], 320);
 	createStackedBarChart(build_list[405], 440);
 
@@ -359,6 +359,13 @@ function createStackedBarChart(pc, xPos){
 	root = root.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
+	root.append("text")
+		.attr("class", "stacked-bar-name")
+		.attr("x",xPos)
+		.attr("y",height + 20)
+		.attr("width", barWidth)
+		.text(pc.name.length <= 10 ? pc.name : pc.name.substring(0,10) + "...");
+		
 	var barVals = categorizeParts(pc);
 	barVals.reverse();
 
@@ -389,10 +396,7 @@ function createStackedBarChart(pc, xPos){
 			var type = d.part_type.replace(new RegExp(' ','g'), '-');
 			return "stack-bar bar-part-type-" + type;
 		});
-		
-	stackedBar.append("text")
-		.attr("class", "text")
-		.text(function(d){return d.part_type;});
+
 }
 
 function updateVis() {
