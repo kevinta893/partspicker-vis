@@ -284,9 +284,10 @@ function createVis() {
 				yValue + ")";
 		})
 		.on("click", function(d){
-			showHoverMenu(d.build_id, xScale(d.total_price), yScale(d.total_gpu_score));
 		})
 		.on("mouseover", function(d){
+			showHoverMenu(d.build_id, xScale(d.total_price), yScale(d.total_gpu_score));
+
 		})
 		.append("circle")
 			.attr("r", 0);
@@ -325,6 +326,12 @@ function createVis() {
 		.attr("x", 0)
 		.attr("y", 45)
 		.text("GPU Score");
+	hover_menu.append("text")
+		.attr("class", "hover-menu-label")
+		.attr("id", "hover-menu-pc-total-price")
+		.attr("x", 0)
+		.attr("y", 60)
+		.text("Total Price");
 	//hover button
 	hover_menu.append("rect")
 		.attr("id", "hover-menu-button")
@@ -440,8 +447,9 @@ function showHoverMenu(build_id, x, y){
 
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
 	$("#hover-menu-pc-name-label").text(pcNameTruncated);
-	$("#hover-menu-pc-cpu-detail").text("CPU Score:" + pc.total_cpu_score);
-	$("#hover-menu-pc-gpu-detail").text("CPU Score:" + pc.total_gpu_score);
+	$("#hover-menu-pc-cpu-detail").text("CPU Score: " + pc.total_cpu_score);
+	$("#hover-menu-pc-gpu-detail").text("CPU Score: " + pc.total_gpu_score);
+	$("#hover-menu-pc-total-price").text("Total Price: $" + pc.total_price);
 	$("#hover-menu-button")
 		.click(function(){
 			openDetailWindow(build_id);
