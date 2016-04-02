@@ -190,7 +190,7 @@ function formatData(pc_data, software_data) {
 				return 0;
 			}
 		}
-		
+		return 0;
 	});
 	
 	
@@ -200,12 +200,20 @@ function formatData(pc_data, software_data) {
 	//software list data formattting
 	
 	software_req_list = software_data;
+	//set all nulls to zero
+	for ( var i= 0; i< software_req_list.length ; i++){
+		var d = software_req_list[i];
+		software_req_list[i].min_cpu_bench = d.min_cpu_bench == "null" ? 0 : d.min_cpu_bench;
+		software_req_list[i].min_gpu_bench = d.min_gpu_bench == "null" ? 0 : d.min_gpu_bench;
+		software_req_list[i].rec_cpu_bench = d.rec_cpu_bench == "null" ? 0 : d.rec_cpu_bench;
+		software_req_list[i].rec_gpu_bench = d.rec_gpu_bench == "null" ? 0 : d.rec_gpu_bench;
 
+	}
 	software_req_list = software_req_list.sort(function(a,b){
 		//combine the total score for recommended requirements from both cpu and gpu
 		//ignore nulls by setting them to default as zero
-		var totalMinScoreA = (a.rec_cpu_bench == "null" ? 0 : a.rec_cpu_bench) + (a.rec_gpu_bench == "null" ? 0 : a.rec_gpu_bench);
-		var totalMinScoreB = (b.rec_cpu_bench == "null" ? 0 : b.rec_cpu_bench) + (b.rec_gpu_bench == "null" ? 0 : b.rec_gpu_bench);
+		var totalMinScoreA = a.rec_cpu_bench + a.rec_gpu_bench;
+		var totalMinScoreB = b.rec_cpu_bench + b.rec_gpu_bench;
 		
 		//sort in decending (highest to low)
 		if (totalMinScoreA < totalMinScoreB){
@@ -219,6 +227,7 @@ function formatData(pc_data, software_data) {
 		}
 		
 	});
+	
 	
 	console.log("Total software in Database: " + software_req_list.length);
 	
@@ -441,31 +450,64 @@ function showHoverMenu(build_id, x, y){
 	
 	updateSoftwareReqList(build_id);
 }
-
 function updateSoftwareReqList(build_id){
 	var pc = getPC(build_id);
+
+	var new_software_list=[];
+	new_software_list = software_req_list;
+
 	
-	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
-		.select("div")
+	for (var i = 0 ; i < new_software_list.length; i++){
+		var software = new_software_list[i];
+
+		if ((pc.total_cpu_score >= software.rec_cpu_bench) && (pc.total_gpu_score >= software.rec_gpu_bench)){
+			new_software_list[i].sort_priority = 2;
+		}
+		else if ((pc.total_cpu_score >= software.min_cpu_bench) && (pc.total_gpu_score >= software.min_gpu_bench)){
+			new_software_list[i].sort_priority = 1;
+		}
+		else{
+			new_software_list[i].sort_priority = 0;
+		}
+	}
+	
+	new_software_list = new_software_list.sort(function(a,b){
+		
+		if (a.sort_priority > b.sort_priority) { 
+			return 1;
+		}
+		else if (a.sort_priority < b.sort_priority) { 
+			return -1;
+		}
+		else{
+			return 0;
+		}
+		
+	});
+	
+	d3.select("#software-list").selectAll(".software").remove();
+	var softwareItem = d3.select("#software-list").selectAll(".software").data(new_software_list)
+		.enter()
+		.append("div")
 			.attr("class", "software")
-			.select("div")
+			.append("div")
 				.attr("class", function(d){
-					if ((pc.total_cpu_score >= d.rec_cpu_bench) && (pc.total_gpu_score >= d.rec_gpu_bench)){
+					if (d.sort_priority == 2){
 						return "software-run-rec";
 					}
-					else if ((pc.total_cpu_score >= d.min_cpu_bench) && (pc.total_gpu_score >= d.min_gpu_bench)){
+					else if (d.sort_priority == 1){
 						return "software-run-min";
 					}
 					else{
 						return "software-no-run";
 					}
-				})
+				});
 			
-	softwareItem.select("img")
+	softwareItem.append("img")
 		.attr("class", "software-icon")
 		.attr("src", "./images/cross.png");	
 		
-	softwareItem.select("div")
+	softwareItem.append("div")
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});
 }
@@ -546,6 +588,6 @@ function getGPUCount(build){
 
 function getPC(build_id){
 	return build_list.find(function(ele, index, arr){
-		return ele.build_id === build_id;
+		return ele.build_id == build_id;
 	});
 }
