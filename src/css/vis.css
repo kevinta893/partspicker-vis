@@ -10,6 +10,35 @@ svg {
 	height: 500px;
 }
 
+
+#hover-menu-group{}
+
+#hover-menu-box{
+	fill: #ff0000;
+}
+
+.hover-menu-label{
+	
+}
+
+#hover-menu-button{
+	fill: blue;
+
+}
+#hover-menu-pc-button-label{
+	
+}
+#hover-menu-button:hover, #hover-menu-button-label:hover ~ #hover-menu-button{
+	fill: green;
+} 
+
+#hover-menu-pc-name-label{
+	font-weight:bold;
+}
+#hover-menu-pc-cpu-detail{}
+#hover-menu-pc-gpu-detail{}
+
+
 #software-list{
 	border: 1px solid black;
 	height:400px; 

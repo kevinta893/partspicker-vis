@@ -19,7 +19,9 @@ d3.json("data.json",
 */
 
 var root;
+var hover_menu;
 
+//===============================
 var margin = {
 	top : 50,
 	left: 90,
@@ -37,7 +39,7 @@ var yAxis = d3.svg.axis().orient("left");
 
 var firstRun = true;
 
-
+//===============================
 //Asthetic controls
 var pointSize = 6;
 
@@ -49,6 +51,16 @@ var X_AXIS_POSITION = {
 var Y_AXIS_POSITION = {
 	top: height/2 + (-50),
 	left: -1 * margin.left
+};
+
+var HOVER_MENU_SIZE ={
+	width: 200,
+	height: 100,
+	
+	button_width: 90,
+	button_height: 30,
+	button_pad_right: 3,
+	button_pad_bottom: 3
 };
 
 var X_AXIS_LABEL = "Total Price (USD)";
@@ -247,6 +259,7 @@ function createVis() {
 			.attr("y", 6)
 			.attr("dy", ".71em")
 			.style("text-anchor", "end");
+				
 		
 	//create each pc build
 	root.selectAll(".pc").data(build_list)
@@ -256,16 +269,73 @@ function createVis() {
 		.attr("transform", function(d) {
 			//locate the points
 			var xValue = xScale(d.total_price);
+			var yValue = yScale(d.total_gpu_score);
 			return "translate(" +
 				xValue + "," + 
-				height + ")";
+				yValue + ")";
 		})
 		.on("click", function(d){
-			openDetailWindow(d.build_id);
+			showHoverMenu(d.build_id, xScale(d.total_price), yScale(d.total_gpu_score));
+		})
+		.on("mouseover", function(d){
 		})
 		.append("circle")
 			.attr("r", 0);
-			
+	
+	
+	//create a single hover menu (must be done after scatterplots)
+	hover_menu = root.selectAll(".pc").data([{}])
+		.enter()
+		.append("g")
+			.attr("id", "hover-menu-group")
+			.attr("transform", "translate(" + 0 + "," + 0 + ")")
+			.attr("visibility", "visible");
+		
+	hover_menu.append("rect")
+		.attr("id", "hover-menu-box")
+		.attr("width", HOVER_MENU_SIZE.width)
+		.attr("height", HOVER_MENU_SIZE.height);	
+	//hover labels	
+	hover_menu.append("text")
+		.attr("class", "hover-menu-label")
+		.attr("id", "hover-menu-pc-name-label")
+		.attr("x", 0)
+		.attr("y", 15)
+		.text("Build Name");	
+		
+	hover_menu.append("text")
+		.attr("class", "hover-menu-label")
+		.attr("id", "hover-menu-pc-cpu-detail")
+		.attr("x", 0)
+		.attr("y", 30)
+		.text("CPU Score");	
+		
+	hover_menu.append("text")
+		.attr("class", "hover-menu-label")
+		.attr("id", "hover-menu-pc-gpu-detail")
+		.attr("x", 0)
+		.attr("y", 45)
+		.text("GPU Score");
+	//hover button
+	hover_menu.append("rect")
+		.attr("id", "hover-menu-button")
+		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right)
+		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom)
+		.attr("width", HOVER_MENU_SIZE.button_width)
+		.attr("height", HOVER_MENU_SIZE.button_height)
+		.on("click", function(){
+			console.log("No Build selected.");
+		});
+	hover_menu.append("text")
+		.attr("id", "hover-menu-button-label")
+		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right + 1)
+		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom+15)
+		.on("click", function(){
+			console.log("No Build selected.");
+		})
+		.text("Build Details");
+
+	
 	//create list of software
 	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
 		.enter()
@@ -352,6 +422,46 @@ function updateVis() {
 	}
 }
 
+function showHoverMenu(build_id, x, y){
+	var MAX_NAME_LENGTH = 20;
+	var pc = getPC(build_id);
+
+	
+	$("#hover-menu-group").attr("transform", "translate(" + x + "," + y + ")");
+
+	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
+	$("#hover-menu-pc-name-label").text(pcNameTruncated);
+	$("#hover-menu-pc-cpu-detail").text("CPU Score:" + pc.total_cpu_score);
+	$("#hover-menu-pc-gpu-detail").text("CPU Score:" + pc.total_gpu_score);
+	$("#hover-menu-button")
+		.click(function(){
+			openDetailWindow(build_id);
+		});
+	
+	
+	updateSoftwareReqList(build_id);
+}
+
+function updateSoftwareReqList(build_id){
+	var pc = getPC(build_id);
+	
+	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
+		.enter()
+		.append("div")
+			.attr("class", "software")
+			.append("div")
+				.attr("class", "software-no-run")
+			
+	softwareItem.append("img")
+		.attr("class", "software-icon")
+		.attr("src", "./images/cross.png");	
+		
+	softwareItem.append("div")
+		.attr("class", "software-label")
+		.html(function(d){ return d.name;});		
+}
+
+
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
@@ -423,4 +533,10 @@ function getGPUCount(build){
 		return ele.part_type === "Video Card";
 	});
 	return gpuList.length;
+}
+
+function getPC(build_id){
+	return build_list.find(function(ele, index, arr){
+		return ele.build_id === build_id;
+	});
 }
