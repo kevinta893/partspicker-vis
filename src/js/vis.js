@@ -60,7 +60,10 @@ var HOVER_MENU_SIZE ={
 	button_width: 90,
 	button_height: 30,
 	button_pad_right: 3,
-	button_pad_bottom: 3
+	button_pad_bottom: 3,
+	
+	mouse_offset_x: 10,
+	mouse_offset_y: 10
 };
 
 var X_AXIS_LABEL = "Total Price (USD)";
@@ -338,17 +341,12 @@ function createVis() {
 		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right)
 		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom)
 		.attr("width", HOVER_MENU_SIZE.button_width)
-		.attr("height", HOVER_MENU_SIZE.button_height)
-		.on("click", function(){
-			console.log("No Build selected.");
-		});
+		.attr("height", HOVER_MENU_SIZE.button_height);
+		
 	hover_menu.append("text")
 		.attr("id", "hover-menu-button-label")
 		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right + 1)
 		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom+15)
-		.on("click", function(){
-			console.log("No Build selected.");
-		})
 		.text("Build Details");
 
 	
@@ -443,18 +441,20 @@ function showHoverMenu(build_id, x, y){
 	var pc = getPC(build_id);
 
 	
-	$("#hover-menu-group").attr("transform", "translate(" + x + "," + y + ")");
+	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_SIZE.mouse_offset_x)+ "," + (y - HOVER_MENU_SIZE.mouse_offset_y - HOVER_MENU_SIZE.height) + ")");
 
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
 	$("#hover-menu-pc-name-label").text(pcNameTruncated);
 	$("#hover-menu-pc-cpu-detail").text("CPU Score: " + pc.total_cpu_score);
 	$("#hover-menu-pc-gpu-detail").text("CPU Score: " + pc.total_gpu_score);
 	$("#hover-menu-pc-total-price").text("Total Price: $" + pc.total_price);
-	$("#hover-menu-button")
-		.click(function(){
-			openDetailWindow(build_id);
-		});
-	
+	$("#hover-menu-button").attr("build",build_id);
+	$("#hover-menu-button").click(function(){
+		openDetailWindow($("#hover-menu-button").attr("build"));
+	});
+	$("#hover-menu-button-label").click(function(){
+		openDetailWindow($("#hover-menu-button").attr("build"));
+	});
 	
 	updateSoftwareReqList(build_id);
 }
