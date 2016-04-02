@@ -287,10 +287,9 @@ function createVis() {
 				yValue + ")";
 		})
 		.on("click", function(d){
+			showHoverMenu(d.build_id, xScale(d.total_price), yScale(d.total_gpu_score));
 		})
 		.on("mouseover", function(d){
-			showHoverMenu(d.build_id, xScale(d.total_price), yScale(d.total_gpu_score));
-
 		})
 		.append("circle")
 			.attr("r", 0);
@@ -348,7 +347,12 @@ function createVis() {
 		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right + 1)
 		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom+15)
 		.text("Build Details");
-
+	//add event to click on graph background to hide hover
+	$("#graphics").click(function(e){
+		if (e.toElement.id == "graphics"){
+			hideHoverMenu();
+		}
+	});
 	
 	//create list of software
 	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
@@ -436,11 +440,15 @@ function updateVis() {
 	}
 }
 
+function hideHoverMenu(){
+	$("#hover-menu-group").attr("visibility", "hidden")
+}
+
 function showHoverMenu(build_id, x, y){
 	var MAX_NAME_LENGTH = 20;
 	var pc = getPC(build_id);
 
-	
+	$("#hover-menu-group").attr("visibility", "visible");
 	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_SIZE.mouse_offset_x)+ "," + (y - HOVER_MENU_SIZE.mouse_offset_y - HOVER_MENU_SIZE.height) + ")");
 
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
