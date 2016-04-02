@@ -201,7 +201,7 @@ function formatData(pc_data, software_data) {
 	
 	software_req_list = software_data;
 
-	software_req_list.sort(function(a,b){
+	software_req_list = software_req_list.sort(function(a,b){
 		//combine the total score for recommended requirements from both cpu and gpu
 		//ignore nulls by setting them to default as zero
 		var totalMinScoreA = (a.rec_cpu_bench == "null" ? 0 : a.rec_cpu_bench) + (a.rec_gpu_bench == "null" ? 0 : a.rec_gpu_bench);
@@ -446,19 +446,28 @@ function updateSoftwareReqList(build_id){
 	var pc = getPC(build_id);
 	
 	var softwareItem = d3.select("#software-list").selectAll(".software").data(software_req_list)
-		.enter()
-		.append("div")
+		.select("div")
 			.attr("class", "software")
-			.append("div")
-				.attr("class", "software-no-run")
+			.select("div")
+				.attr("class", function(d){
+					if ((pc.total_cpu_score >= d.rec_cpu_bench) && (pc.total_gpu_score >= d.rec_gpu_bench)){
+						return "software-run-rec";
+					}
+					else if ((pc.total_cpu_score >= d.min_cpu_bench) && (pc.total_gpu_score >= d.min_gpu_bench)){
+						return "software-run-min";
+					}
+					else{
+						return "software-no-run";
+					}
+				})
 			
-	softwareItem.append("img")
+	softwareItem.select("img")
 		.attr("class", "software-icon")
 		.attr("src", "./images/cross.png");	
 		
-	softwareItem.append("div")
+	softwareItem.select("div")
 		.attr("class", "software-label")
-		.html(function(d){ return d.name;});		
+		.html(function(d){ return d.name;});
 }
 
 
