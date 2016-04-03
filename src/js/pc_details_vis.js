@@ -409,7 +409,30 @@ function createStackedBarChart(pc, xPos){
 			});
 
 			
-			
+	
+	//compute how many software that can be runned by this build
+	var pieData = [
+		{id: "none", val: 0},
+		{id: "min", val: 0},
+		{id: "rec", val: 0}
+	];
+
+	for (var i = 0 ; i < software_req_list.length; i++){
+		var software = software_req_list[i];
+
+		if ((pc.total_cpu_score >= software.rec_cpu_bench) && (pc.total_gpu_score >= software.rec_gpu_bench)){
+			pieData[2].val++;
+		}
+		else if ((pc.total_cpu_score >= software.min_cpu_bench) && (pc.total_gpu_score >= software.min_gpu_bench)){
+			pieData[1].val++;
+		}
+		else{
+			pieData[0].val++;
+		}
+	}
+
+
+	
 	//now create the associated pie chart
 	//Mike Bostock's Pie Chart, adapted for use here
 	//https://bl.ocks.org/mbostock/3887235
@@ -431,7 +454,7 @@ function createStackedBarChart(pc, xPos){
 		.value(function(d) { return d.val; });
 		
 	var g = root.selectAll(".arc")
-		.data(pie([{id: "none", val: 1},{id: "min", val: 1}, {id: "rec", val: 10}]))
+		.data(pie(pieData))
 		.enter()
 		.append("g")
 			.attr("transform", "translate(" + (xPos + radius) + "," + (height + radius + 50) + ")")
