@@ -582,6 +582,7 @@ function createButtons() {
 		max: SLIDER_PARAMETERS.max,
 		values: [ SLIDER_PARAMETERS.init_lower_value, SLIDER_PARAMETERS.init_upper_value ],
 		slide: function( event, ui ) {
+			hideHoverMenu();
 			
 			if (ui.values[1] - ui.values[0] < SLIDER_PARAMETERS.min_diff){
 				return false;
@@ -592,26 +593,8 @@ function createButtons() {
 			$( "#range-label" ).text( "$" + ui.values[0] + " - $" + ui.values[1] );
 			updateVis();
 		}
-		});
-	/*
-	//create slider
-	var sliderGroup = d3.select("#slider").selectAll(".sliderGroup").data([{}])
-		.enter()
-		.append("input")
-			.attr("id", "price-slider")
-			.attr("type", "range")
-			.attr("min", SLIDER_PARAMETERS.min)
-			.attr("max", SLIDER_PARAMETERS.max)
-			.attr("value", SLIDER_PARAMETERS.init_value)
-			.attr("step", SLIDER_PARAMETERS.step)
-			.attr("width", SLIDER_PARAMETERS.width)
-			.attr("height", SLIDER_PARAMETERS.height)
-			.on("input", function(){
-				xMax = this.value;
-				$("#range-label").text("$"+ 0 + "-" + this.value);
-				updateVis();
-			});
-			*/
+	});
+
 	
 	var gpuCheckData = [
 		{id:"gpucheckbox1", label: "1"},
