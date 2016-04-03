@@ -370,6 +370,7 @@ function createVis() {
 		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right + 1)
 		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom+15)
 		.text("Build Details");
+		
 	//add event to click on graph background to hide hover
 	$("#graphics").click(function(e){
 		if (e.toElement.id == "graphics"){
@@ -393,6 +394,9 @@ function createVis() {
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});		
 		
+	
+	hideHoverMenu();		//deactivate software menu
+
 }
 
 function updateVis() {
