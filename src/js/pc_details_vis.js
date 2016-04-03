@@ -408,6 +408,47 @@ function createStackedBarChart(pc, xPos){
 				return parseFloat(d.percent).toFixed(2) + "%";
 			});
 
+			
+			
+	//now create the associated pie chart
+	//Mike Bostock's Pie Chart, adapted for use here
+	//https://bl.ocks.org/mbostock/3887235
+	var pieWidth = 100;
+	var pieHeight = 100;
+	var radius = Math.min(pieWidth, pieHeight) / 2;		
+		
+
+	var arc = d3.svg.arc()
+		.outerRadius(radius - 10)
+		.innerRadius(0);
+
+	var labelArc = d3.svg.arc()
+		.outerRadius(radius - 40)
+		.innerRadius(radius - 40);
+		
+	var pie = d3.layout.pie()
+		.sort(null)
+		.value(function(d) { return d.val; });
+		
+	var g = root.selectAll(".arc")
+		.data(pie([{id: "none", val: 1},{id: "min", val: 1}, {id: "rec", val: 10}]))
+		.enter()
+		.append("g")
+			.attr("transform", "translate(" + (xPos + radius) + "," + (height + radius + 50) + ")")
+			.attr("class", "arc");	
+		  
+		g.append("path")
+			.attr("d", arc)
+			.attr("class", function(d){
+				return "pie-section-" + d.data.id;
+			});
+
+		g.append("text")
+			.attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+			.attr("dy", ".35em")
+			.text(function(d) { return d.data.age; });	
+			
+			
 }
 
 function updateVis() {
