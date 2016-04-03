@@ -92,6 +92,11 @@ var SLIDER_PARAMETERS ={
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
 
+var REC_REQ_ICON = "images/check.png";
+var MIN_REQ_ICON = "images/dash.png";
+var NO_REQ_ICON =  "images/cross.png";
+var NO_SELECT_ICON = "images/question.png";
+
 
 //runtime variables (change and update for effect)
 var xMax = max_price;
@@ -316,7 +321,7 @@ function createVis() {
 		.append("g")
 			.attr("id", "hover-menu-group")
 			.attr("transform", "translate(" + 0 + "," + 0 + ")")
-			.attr("visibility", "visible");
+			.attr("visibility", "hidden");
 		
 	hover_menu.append("rect")
 		.attr("id", "hover-menu-box")
@@ -456,6 +461,13 @@ function updateVis() {
 
 function hideHoverMenu(){
 	$("#hover-menu-group").attr("visibility", "hidden")
+	
+	var softwareItem = d3.select("#software-list").selectAll(".software")
+		.select("div")
+		.attr("class", "software-no-select")
+			.select("img")
+			.attr("class", "software-icon")
+			.attr("src", NO_SELECT_ICON);	
 }
 
 function showHoverMenu(build_id, x, y){
@@ -535,7 +547,17 @@ function updateSoftwareReqList(build_id){
 			
 	softwareItem.append("img")
 		.attr("class", "software-icon")
-		.attr("src", "./images/cross.png");	
+		.attr("src", function(d){
+			if (d.sort_priority == 2){
+				return REC_REQ_ICON;
+			}
+			else if (d.sort_priority == 1){
+				return MIN_REQ_ICON;
+			}
+			else{
+				return NO_REQ_ICON;
+			}
+		});	
 		
 	softwareItem.append("div")
 		.attr("class", "software-label")

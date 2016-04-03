@@ -51,6 +51,7 @@ svg {
 .software{
 	height: 30px;
 	border: 1px solid grey;
+	
 }
 
 .software-no-run{
@@ -72,6 +73,12 @@ svg {
 	width: 100%;
 	padding-left: 0.5em;
 	background-color: #5AFF52;
+}
+.software-no-select{
+	height: 100%;
+	width: 100%;
+	padding-left: 0.5em;
+	background-color: grey;
 }
 
 .software-icon{
