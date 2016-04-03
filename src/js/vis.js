@@ -83,10 +83,13 @@ var SLIDER_PARAMETERS ={
 	width: 300,
 	height: 200,
 	
-	step: 100,
-	min: 500,
+	step: 50,
+	min: 0,
 	max: max_price,
-	init_value: max_price
+	min_diff: 250,
+	init_upper_value: max_price,
+	init_lower_value: min_price
+	
 };
 
 var X_AXIS_LABEL = "Total Price (USD)";
@@ -100,7 +103,7 @@ var NO_SELECT_ICON = "images/question.png";
 
 //runtime variables (change and update for effect)
 var xMax = max_price;
-
+var xMin = min_price;
 
 //initialize
 formatData(pc_list, software_list);
@@ -396,7 +399,7 @@ function updateVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
 	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
-	xScale.domain([0, xMax]);
+	xScale.domain([xMin, xMax]);
 	yScale.domain([0, maxValY]);
 
 	
@@ -426,11 +429,15 @@ function updateVis() {
 			.transition()
 			.ease("elastic")
 			.duration(1000)
+			
 			.delay(function(d, i){
 				if (firstRun === true){
 					return (750 * d.total_gpus) + (d.total_price/15);
 				}
 				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/30);
+			})
+			.attr("visibility", function(d){
+				return (d.total_price >= xMin) && (d.total_price <= xMax) ? "visible" : "hidden";
 			})
 			.attr("r", function(d) {		
 				//circle radius
@@ -568,8 +575,25 @@ function updateSoftwareReqList(build_id){
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
-
-
+	$("#price-slider").slider({
+		range: true,
+		step: SLIDER_PARAMETERS.step,
+		min: SLIDER_PARAMETERS.min,
+		max: SLIDER_PARAMETERS.max,
+		values: [ SLIDER_PARAMETERS.init_lower_value, SLIDER_PARAMETERS.init_upper_value ],
+		slide: function( event, ui ) {
+			
+			if (ui.values[1] - ui.values[0] < SLIDER_PARAMETERS.min_diff){
+				return false;
+			}
+			
+			xMin = ui.values[0];
+			xMax = ui.values[1];
+			$( "#range-label" ).text( "$" + ui.values[0] + " - $" + ui.values[1] );
+			updateVis();
+		}
+		});
+	/*
 	//create slider
 	var sliderGroup = d3.select("#slider").selectAll(".sliderGroup").data([{}])
 		.enter()
@@ -584,10 +608,10 @@ function createButtons() {
 			.attr("height", SLIDER_PARAMETERS.height)
 			.on("input", function(){
 				xMax = this.value;
+				$("#range-label").text("$"+ 0 + "-" + this.value);
 				updateVis();
 			});
-
-	//buttonGroups.append("label").html(function(d){return d.name;});
+			*/
 	
 	var gpuCheckData = [
 		{id:"gpucheckbox1", label: "1"},
@@ -601,17 +625,17 @@ function createButtons() {
 		.enter();
 	
 	checkboxGroup.append("label")
-			.html(function (d){
-				return d.label;
-			})
-			.append("input")
-				.attr("class", "gpuCheckbox")
-				.attr("id", function(d){ return d.id;})
-				.attr("type", "checkbox")
-				.attr("checked", "true")
-				.on("change", function(d){
-					updateVis();
-				});
+		.html(function (d){
+			return d.label;
+		})
+		.append("input")
+			.attr("class", "gpuCheckbox")
+			.attr("id", function(d){ return d.id;})
+			.attr("type", "checkbox")
+			.attr("checked", "true")
+			.on("change", function(d){
+				updateVis();
+			});
 	
 }
 

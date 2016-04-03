@@ -5,6 +5,8 @@
 <head>
 	<title>PC Parts Picker Visualization</title>
 	<link rel="stylesheet" type="text/css" href="./css/vis.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
 </head>
 
 <body>
@@ -25,11 +27,15 @@
 
 <br style="clear: both;"> 
 
-<div id="slider">
+<div id="slider-box">
+	<div id="range-label">$0-0</div>
+	<div id="price-slider"></div>
+	
 </div>
 
 <script src="./js/d3.v3.min.js" type="text/javascript"></script>
 <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <script src="./js/data/pc_list.js" type="text/javascript"></script>
 <script src="./js/data/software_requirements.js" type="text/javascript"></script>
