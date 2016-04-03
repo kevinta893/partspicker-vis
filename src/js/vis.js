@@ -21,6 +21,19 @@ d3.json("data.json",
 var root;
 var hover_menu;
 
+//Pre-render data filters
+var min_price = 1;
+var max_price = 10000;
+
+var min_gpu_performance = 1;
+var max_gpu_performance = 500000;
+
+var min_cpu_performance = 1;
+var max_cpu_performance = 500000;
+
+var max_gpu_count = 4;
+var max_cpu_count = 2;
+
 //===============================
 var margin = {
 	top : 50,
@@ -66,23 +79,25 @@ var HOVER_MENU_SIZE ={
 	mouse_offset_y: 10
 };
 
+var SLIDER_PARAMETERS ={
+	width: 300,
+	height: 200,
+	
+	step: 100,
+	min: 500,
+	max: max_price,
+	init_value: max_price
+};
+
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
 
 
-//Pre-render data filters
-var min_price = 1;
-var max_price = 10000;
+//runtime variables (change and update for effect)
+var xMax = max_price;
 
-var min_gpu_performance = 1;
-var max_gpu_performance = 500000;
 
-var min_cpu_performance = 1;
-var max_cpu_performance = 500000;
-
-var max_gpu_count = 4;
-var max_cpu_count = 2;
-
+//initialize
 formatData(pc_list, software_list);
 createButtons();
 createVis();
@@ -372,12 +387,11 @@ function createVis() {
 		
 }
 
-
 function updateVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
 	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
-	xScale.domain([0, maxValX]);
+	xScale.domain([0, xMax]);
 	yScale.domain([0, maxValY]);
 
 	
@@ -532,18 +546,24 @@ function updateSoftwareReqList(build_id){
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
-	var buttonsData = [
-		{name:"x axis", target: "x"},
-		{name:"y axis", target: "y"},
-		{name:"size", target: "size"}
-	];
 
-	//create a button group
-	var buttonGroup = d3.select("#buttons").selectAll(".buttonGroup")
-		.data(buttonsData)
+
+	//create slider
+	var sliderGroup = d3.select("#slider").selectAll(".sliderGroup").data([{}])
 		.enter()
-		.append("span").attr("class", "buttonGroup");
-	
+		.append("input")
+			.attr("id", "price-slider")
+			.attr("type", "range")
+			.attr("min", SLIDER_PARAMETERS.min)
+			.attr("max", SLIDER_PARAMETERS.max)
+			.attr("value", SLIDER_PARAMETERS.init_value)
+			.attr("step", SLIDER_PARAMETERS.step)
+			.attr("width", SLIDER_PARAMETERS.width)
+			.attr("height", SLIDER_PARAMETERS.height)
+			.on("input", function(){
+				xMax = this.value;
+				updateVis();
+			});
 
 	//buttonGroups.append("label").html(function(d){return d.name;});
 	
