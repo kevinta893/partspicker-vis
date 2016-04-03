@@ -136,21 +136,47 @@ function formatData(pc_data, software_data) {
 		
 	}
 	
+	var part_type_list_required = [
+		"CPU",
+		"Video Card",
+		"Memory",
+		"Motherboard",
+		"Storage",
+		"Power Supply",
+		"Case"
+	];
+	
 	//filter out partial builds
 	build_list = build_list.filter(function (ele, index, arr){
-		if (hasPart(ele, "CPU") && 
-			hasPart(ele, "Video Card") && 
-			hasPart(ele, "Motherboard") && 
-			hasPart(ele, "Power Supply") && 
-			hasPart(ele, "Memory") && 
-			hasPart(ele, "Case") && 
-			hasPart(ele, "Storage")){
-				return true;
+		for(var i =0; i < part_type_list_required.length ; i++){
+			if (hasPart(ele, part_type_list_required[i]) == false){
+				return false;
 			}
-			else {false;}
+		}
 
+		return true;
 	});
 	
+	
+	/*
+	//filter out builds with parts with missing prices
+	build_list = build_list.filter(function (ele, index, arr){
+		var partsList = ele.parts_list;
+		for (var i =0 ; i < partsList.length ; i++){
+			if (typeof part_type_list_required.find(function (ele){
+					return partsList[i].part_type == ele;
+			}) !="undefined"){
+				//Is a required part, now check if the price is valid
+				if (isFinite(parseInt(partsList[i].part_price)) || isFinite(parseInt(partsList[i].part_price_alt))){}
+				else{ return false;}
+			}
+		}
+
+		return true;
+			
+
+	});
+	//*/
 	
 	//narrow the range of PCs by total price 
 	build_list = build_list.filter(function (ele, index, arr){
@@ -182,28 +208,53 @@ function formatData(pc_data, software_data) {
 	build_list = build_list.sort(function (a,b){
 		
 		if (a.total_price < b.total_price){
-			return -1;
+			//sort in decending (highest to low)
+			if (a.total_gpus < b.total_gpus){
+				return -1;
+			}
+			else if (a.total_gpus > b.total_gpus){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
 		else if (a.total_price > b.total_price){
-			return 1;
+			//sort in decending (highest to low)
+			if (a.total_gpus < b.total_gpus){
+				return -1;
+			}
+			else if (a.total_gpus > b.total_gpus){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
 		return 0;
-		
 	});
 	
 	
-	console.log("Total complete PCs in Database: " + build_list.length);
+	console.log("Total complete & valid PCs in Database: " + build_list.length);
 
 	//==================================================
 	//software list data formattting
 	
 	software_req_list = software_data;
+	//set all nulls to zero
+	for ( var i= 0; i< software_req_list.length ; i++){
+		var d = software_req_list[i];
+		software_req_list[i].min_cpu_bench = d.min_cpu_bench == "null" ? 0 : d.min_cpu_bench;
+		software_req_list[i].min_gpu_bench = d.min_gpu_bench == "null" ? 0 : d.min_gpu_bench;
+		software_req_list[i].rec_cpu_bench = d.rec_cpu_bench == "null" ? 0 : d.rec_cpu_bench;
+		software_req_list[i].rec_gpu_bench = d.rec_gpu_bench == "null" ? 0 : d.rec_gpu_bench;
 
-	software_req_list.sort(function(a,b){
+	}
+	software_req_list = software_req_list.sort(function(a,b){
 		//combine the total score for recommended requirements from both cpu and gpu
 		//ignore nulls by setting them to default as zero
-		var totalMinScoreA = (a.rec_cpu_bench == "null" ? 0 : a.rec_cpu_bench) + (a.rec_gpu_bench == "null" ? 0 : a.rec_gpu_bench);
-		var totalMinScoreB = (b.rec_cpu_bench == "null" ? 0 : b.rec_cpu_bench) + (b.rec_gpu_bench == "null" ? 0 : b.rec_gpu_bench);
+		var totalMinScoreA = a.rec_cpu_bench + a.rec_gpu_bench;
+		var totalMinScoreB = b.rec_cpu_bench + b.rec_gpu_bench;
 		
 		//sort in decending (highest to low)
 		if (totalMinScoreA < totalMinScoreB){
@@ -217,6 +268,7 @@ function formatData(pc_data, software_data) {
 		}
 		
 	});
+	
 	
 	console.log("Total software in Database: " + software_req_list.length);
 	
@@ -431,7 +483,8 @@ function createStackedBarChart(pc, xPos){
 		}
 	}
 
-
+console.log(pc);
+console.log(pieData);
 	
 	//now create the associated pie chart
 	//Mike Bostock's Pie Chart, adapted for use here
