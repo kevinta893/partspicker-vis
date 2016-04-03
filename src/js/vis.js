@@ -480,7 +480,7 @@ function showHoverMenu(build_id, x, y){
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
 	$("#hover-menu-pc-name-label").text(pcNameTruncated);
 	$("#hover-menu-pc-cpu-detail").text("CPU Score: " + pc.total_cpu_score);
-	$("#hover-menu-pc-gpu-detail").text("CPU Score: " + pc.total_gpu_score);
+	$("#hover-menu-pc-gpu-detail").text("GPU Score: " + pc.total_gpu_score);
 	$("#hover-menu-pc-total-price").text("Total Price: $" + pc.total_price);
 	$("#hover-menu-button").attr("build",build_id);
 	$("#hover-menu-button").click(function(){
