@@ -6,6 +6,10 @@ body{
 	margin-bottom:0;
 }
 
+#build-name-header{
+	margin-left: 0.5em; 
+}
+
 #chart {
 	border: 1px solid black;
 	width: 70%;

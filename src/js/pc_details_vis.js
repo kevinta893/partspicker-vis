@@ -329,6 +329,18 @@ function setupPage(pc){
 			return -1;
 		}
 		else {
+			//same priority, now sort by price
+			var priceA = parseFloat(a.part_price);
+			var priceB = parseFloat(b.part_price);
+			priceA = isFinite(priceA) ? priceA : 0;
+			priceB = isFinite(priceB) ? priceB : 0;
+			
+			if (priceA > priceB){
+				return -1;
+			}
+			else if (priceA < priceB){
+				return 1;
+			}
 			return 0;
 		}
 	});
