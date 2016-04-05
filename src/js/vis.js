@@ -439,6 +439,36 @@ function updateVis() {
 	xScale.domain([xMin, xMax]);
 	yScale.domain([0, maxValY]);
 
+
+	filterVis(true);
+	
+	
+
+
+	// update the scales for the x and y axes
+	xAxis.scale(xScale);
+	yAxis.scale(yScale);
+	
+	// redraw the axis, ticks, and labels
+	root.select(".xAxis").call(xAxis)
+		.select(".label").text(X_AXIS_LABEL);
+	root.select(".yAxis").call(yAxis)
+		.select(".label").text(Y_AXIS_LABEL);
+		
+	//first run of the visualization is now done
+	if (firstRun === true){
+		firstRun = false;
+	}
+}
+
+function filterVis(show){
+	// recompute the max value for the x and y and size scales
+	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
+	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
+	maxValY *= MAX_Y_PADDING_PERCENT;
+	xScale.domain([xMin, xMax]);
+	yScale.domain([0, maxValY]);
+
 	
 	//check the checkboxes to see if they have changed
 	var gpuEnabled = [
@@ -460,12 +490,12 @@ function updateVis() {
 				yValue + ")";
 		});
 		
-	
+	console.log(show);
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.transition()
-			.ease("elastic")
-			.duration(1000)
+			.ease(show ? "elastic": "quad")
+			.duration(show ? 1000: 250)
 			
 			.delay(function(d, i){
 				if (firstRun === true){
@@ -485,23 +515,6 @@ function updateVis() {
 				if (d.total_gpus > 4) {console.log("Warning: too many GPUs"); console.log(d);}
 				return "pc-point " + "gpu" + d.total_gpus;
 			});
-	
-
-
-	// update the scales for the x and y axes
-	xAxis.scale(xScale);
-	yAxis.scale(yScale);
-	
-	// redraw the axis, ticks, and labels
-	root.select(".xAxis").call(xAxis)
-		.select(".label").text(X_AXIS_LABEL);
-	root.select(".yAxis").call(yAxis)
-		.select(".label").text(Y_AXIS_LABEL);
-		
-	//first run of the visualization is now done
-	if (firstRun === true){
-		firstRun = false;
-	}
 }
 
 function hideHoverMenu(){
@@ -668,7 +681,7 @@ function createButtons() {
 			$("#"+d.id).prop('checked', !checkedVal);
 			$("#checkbox-img"+d.value).attr("src", !checkedVal ? CHECKBOX_CHECKED_IMG : CHECKBOX_UNCHECKED_IMG)
 			//run the update function
-			updateVis();
+			filterVis($("#"+ d.id).is(':checked'));
 		});
 		
 	checkboxGroup.append("label")
@@ -681,7 +694,7 @@ function createButtons() {
 			.attr("type", "checkbox")
 			.attr("checked", "true")
 			.on("change", function(d){
-				updateVis();
+				//nothing, see div click event
 			});
 	checkboxGroup.append("img")
 		.attr("class", "checkbox-image")
