@@ -156,7 +156,10 @@ svg {
 
 
 
-
+.stacked-bar-pc-price{
+	font-weight: bold;
+	font-size: 20;
+}
 
 .stack-bar:hover{
 	stroke: #ffff00;

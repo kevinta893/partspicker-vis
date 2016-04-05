@@ -483,6 +483,9 @@ function createStackedBarChart(pc, xPos){
 	root = root.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
+	
+
+		
 	root.append("text")
 		.attr("class", "stacked-bar-pc-name")
 		.attr("x",xPos)
@@ -544,6 +547,13 @@ function createStackedBarChart(pc, xPos){
 		});
 
 	
+	//add the price label
+	root.append("text")
+		.attr("class", "stacked-bar-pc-price")
+		.attr("x",xPos + 13)
+		.attr("y",prev-5)
+		.attr("width", barWidth)
+		.text("$" + pc.total_price)
 
 	//=======================================
 	//create software runnable piechart	
