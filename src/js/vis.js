@@ -56,6 +56,7 @@ var firstRun = true;
 //Asthetic controls
 var pointSize = 6;
 var MAX_Y_PADDING_PERCENT = 1.2;
+var CHART_POINT_LEFT_CUTOFF_PERCENT = 0.01;
 
 var X_AXIS_POSITION = {
 	top: 45,
@@ -443,7 +444,8 @@ function updateVis() {
 				return (gpuEnabled[d.total_gpus-1] == true ? 1 :0) + (d.total_price/30);
 			})
 			.attr("visibility", function(d){
-				return (d.total_price >= xMin) && (d.total_price <= xMax) ? "visible" : "hidden";
+				var diff = (xMax - xMin)* CHART_POINT_LEFT_CUTOFF_PERCENT;
+				return (d.total_price >= (xMin + diff)) && (d.total_price <= xMax) ? "visible" : "hidden";
 			})
 			.attr("r", function(d) {		
 				//circle radius
