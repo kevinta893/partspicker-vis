@@ -592,7 +592,7 @@ function createStackedBarChart(pc, xPos){
 				return "pie-section-" + d.data.id;
 			})
 			.on("mouseenter", function(d){
-				showHoverMenu(d.data.id + ": " + parseFloat(d.data.val/pieData.softwareCount).toFixed(2) + "%", 
+				showHoverMenu(d.data.id + ": " + (100* parseFloat(d.data.val/pieData.softwareCount).toFixed(2)) + "%", 
 				pieXPos + radius, pieYPos)
 			})
 			.on("mouseleave", function(d){
