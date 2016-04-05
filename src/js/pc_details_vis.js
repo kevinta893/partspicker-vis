@@ -75,6 +75,21 @@ var Y_AXIS_POSITION = {
 	left: -1 * margin.left
 };
 
+var HOVER_MENU_PARAMS ={
+	width: 150,
+	height:30,
+	rx: 5,
+	ry: 5,
+	
+	mouse_offset_x: 10,
+	mouse_offset_y: 10,
+	
+	label_padding_left: 5,
+	label_spacing_top: 21,
+	
+	//see CSS for color and fill of hover menu
+};
+
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
 
@@ -420,6 +435,28 @@ function createVis() {
 		.attr("height", function(d){return d.height});
 		
 		
+	//create hover menu
+	var hoverMenu = root.selectAll("#graphics").data([{}])
+		.enter()
+		.append("g")
+			.attr("id", "hover-menu-group")
+			.attr("transform", "translate(0,0)")
+			.attr("visibility", "hidden");
+		
+	hoverMenu.append("rect")
+		.attr("id", "hover-menu-box")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("rx", HOVER_MENU_PARAMS.rx)
+		.attr("ry", HOVER_MENU_PARAMS.ry)
+		.attr("width", HOVER_MENU_PARAMS.width)
+		.attr("height", HOVER_MENU_PARAMS.height)
+	
+	hoverMenu.append("text")
+		.attr("id", "hover-menu-text")
+		.attr("x", HOVER_MENU_PARAMS.label_padding_left)
+		.attr("y", HOVER_MENU_PARAMS.label_spacing_top)
+		.html("Percentages: 1000%");
 }
 
 function createStackedBarChart(pc, xPos){
@@ -449,37 +486,48 @@ function createStackedBarChart(pc, xPos){
 	var barVals = categorizeParts(pc);
 	barVals.reverse();
 
+	//compute the y positions for each bar
+	var prev = 0;
+	for(var i =0; i < barVals.length ; i++){
+		var barHeight = (barVals[i].percent/100.0) * height;
+		prev = i==0? height: prev;
+		var nextY = prev-barHeight;
+		prev = nextY;
+		
+		barVals[i].barYPos = nextY;
+		barVals[i].barHeight = barHeight;
+	}
+
 	//create each pc build
 	var stackedBar = root.selectAll(".pc").data(barVals)
 		.enter()
 		.append("g")
 			.attr("class", "pc-part-bar")
 			.attr("transform", function(d, i) {
-				//locate the points based on previous Y location
-				var barHeight = (d.percent/100.0) * height;
-				barVals.prev = i==0? height: barVals.prev;
-				var nextY = barVals.prev-barHeight;
-				barVals.prev = nextY;
 				
 				return ret = "translate(" +
 					xPos + "," + 
-					nextY + ")";
-			})
+					d.barYPos + ")";
+			});
 			
 		
 	stackedBar.append("rect")
 		.attr("width", barWidth)
 		.attr("height", function(d,i){
-			return (d.percent/100.0) * height;
+			return d.barHeight;
 		})
 		.attr("class", function(d,i){
 			var type = d.part_type.replace(new RegExp(' ','g'), '-');
 			return "stack-bar bar-part-type-" + type;
 		})
-		.append("title")
-			.html(function(d){
-				return parseFloat(d.percent).toFixed(2) + "%";
-			});
+		.on("mouseenter", function(d){
+			showHoverMenu(d.part_type + ": " + parseFloat(d.percent).toFixed(2) + "%", 
+			xPos + (barWidth * 0.60), 
+			d.barYPos + (d.barHeight/2) + HOVER_MENU_PARAMS.height);
+		})
+		.on("mouseleave", function(d){
+			hideHoverMenu();
+		});
 
 	
 
@@ -506,7 +554,8 @@ function createStackedBarChart(pc, xPos){
 			pieData[0].val++;
 		}
 	}
-
+	pieData.softwareCount = software_req_list.length;
+	
 	
 	//now create the associated pie chart
 	//Mike Bostock's Pie Chart, adapted for use here
@@ -515,6 +564,8 @@ function createStackedBarChart(pc, xPos){
 	var pieHeight = 100;
 	var radius = Math.min(pieWidth, pieHeight) / 2;		
 		
+	var pieXPos = xPos + radius;
+	var pieYPos = height + radius + 50;
 
 	var arc = d3.svg.arc()
 		.outerRadius(radius - 10)
@@ -532,13 +583,20 @@ function createStackedBarChart(pc, xPos){
 		.data(pie(pieData))
 		.enter()
 		.append("g")
-			.attr("transform", "translate(" + (xPos + radius) + "," + (height + radius + 50) + ")")
+			.attr("transform", "translate(" + pieXPos + "," + pieYPos + ")")
 			.attr("class", "arc");	
 		  
 		g.append("path")
 			.attr("d", arc)
 			.attr("class", function(d){
 				return "pie-section-" + d.data.id;
+			})
+			.on("mouseenter", function(d){
+				showHoverMenu(d.data.id + ": " + parseFloat(d.data.val/pieData.softwareCount).toFixed(2) + "%", 
+				pieXPos + radius, pieYPos)
+			})
+			.on("mouseleave", function(d){
+				hideHoverMenu();
 			});
 
 		g.append("text")
@@ -547,6 +605,22 @@ function createStackedBarChart(pc, xPos){
 			.text(function(d) { return d.data.age; });	
 			
 			
+}
+
+function hideHoverMenu(){
+	$("#hover-menu-group").attr("visibility", "hidden");
+}
+
+function showHoverMenu(showText, x, y){
+	
+	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_PARAMS.mouse_offset_x)+ "," + (y - HOVER_MENU_PARAMS.mouse_offset_y - HOVER_MENU_PARAMS.height) + ")");
+	
+	//add text, resize box
+	$("#hover-menu-text").html(showText);
+	$("#hover-menu-box").attr("width", showText.length * 6.9);
+	
+	$("#hover-menu-group").attr("visibility", "visible");
+
 }
 
 function updateVis() {

@@ -490,13 +490,11 @@ function filterVis(show){
 				yValue + ")";
 		});
 		
-	console.log(show);
 	root.selectAll(".pc_build").data(build_list)
 		.select("circle")
 			.transition()
 			.ease(show ? "elastic": "quad")
 			.duration(show ? 1000: 250)
-			
 			.delay(function(d, i){
 				if (firstRun === true){
 					return (750 * d.total_gpus) + (d.total_price/15);
