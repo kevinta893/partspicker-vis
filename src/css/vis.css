@@ -63,46 +63,44 @@ svg {
 }
 
 .software{
-	height: 30px;
+	height: 2em;
 	border: 1px solid grey;
-	
 }
 
 .software-no-run{
 	height: 100%;
 	width: 100%;
-	padding-left: 0.5em;
 	background-color: #FF5252;
 }
 
 .software-run-min{
 	height: 100%;
 	width: 100%;
-	padding-left: 0.5em;
 	background-color: #FFEB52;
 }
 
 .software-run-rec{	
 	height: 100%;
 	width: 100%;
-	padding-left: 0.5em;
 	background-color: #5AFF52;
 }
 .software-no-select{
 	height: 100%;
 	width: 100%;
-	padding-left: 0.5em;
-	background-color: grey;
+	background-color: darkgrey;
 }
 
 .software-icon{
 	height : 16px;
 	width : 16px;
 	float: left;
+	margin-left: 0.3em;
+	margin-right: 0.3em;
+	padding-top: 0.5em;
 }
 
 .software-label{
-	
+	padding-top: 0.5em;
 }
 
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
