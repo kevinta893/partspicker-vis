@@ -286,7 +286,7 @@ function setupPage(pc){
 		{label: "Name ", val: pc.name},
 		{label: "Total price ", val: "$" + pc.total_price},
 		{label: "Date published ", val: pc.date_published},
-		{label: "Build Blog ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">Click Here</a>"}
+		{label: "PCPartsPicker Blog ", val: "<a href=\""+ pc.buildlink_href + "\" target=\"_blank\">View Blog</a>"}
 	];
 	
 	var summaryList = d3.select("#details-summary").selectAll(".summary-element")
@@ -386,7 +386,7 @@ function createVis() {
 	var relatedBuilds = build_list.filter(function(ele, index, arr) {
 		var min = selected_build.total_price-1000;
 		var max = selected_build.total_price+1000;
-		return (ele.total_price >= min) && (ele.total_price <= max)
+		return (ele.total_price >= min) && (ele.total_price <= max) && (ele.build_id != selected_build.build_id)
 	});
 	
 	

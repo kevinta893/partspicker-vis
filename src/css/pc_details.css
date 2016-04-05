@@ -53,10 +53,11 @@ svg {
 }
 .summary-detail-value{
 	padding-top: 0.2em;
-
 }
 .summary-detail-value>a{
 	padding: 0.2em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 	-webkit-appearance: button;
     -moz-appearance: button;
     appearance: button;
