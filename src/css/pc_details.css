@@ -98,7 +98,6 @@ svg {
 	width: 25%;
 	padding-left: 0.5em;
 	font-weight: bold;
-
 }
 
 .component-type-CPU{
@@ -169,7 +168,15 @@ svg {
 	opacity: 1.0;
 }
 
-
+.stacked-bar-pc-name{
+	fill: black;
+	font-weight: bold;
+}
+.stacked-bar-pc-name:hover{
+	fill: blue;
+	cursor: pointer;
+	text-decoration: underline;
+}
 
 .pie-section-none{
 	fill: #FF5252;

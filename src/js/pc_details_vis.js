@@ -126,6 +126,8 @@ function initPage(){
 }
 
 
+
+
 function formatData(pc_data, software_data) {
 	build_list = pc_data;
 	
@@ -419,11 +421,18 @@ function createStackedBarChart(pc, xPos){
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
 	root.append("text")
-		.attr("class", "stacked-bar-name")
+		.attr("class", "stacked-bar-pc-name")
 		.attr("x",xPos)
 		.attr("y",height + 20)
 		.attr("width", barWidth)
-		.text(pc.name.length <= 10 ? pc.name : pc.name.substring(0,10) + "...");
+		.on("click", function(d){
+			window.location.href = "./pc_details.html?build_id=" + pc.build_id;
+		})
+		.text(pc.name.length <= 10 ? pc.name : pc.name.substring(0,10) + "...")
+		.append("title")
+			.html(function(d){
+				return pc.name;
+			});
 		
 	var barVals = categorizeParts(pc);
 	barVals.reverse();
@@ -460,7 +469,10 @@ function createStackedBarChart(pc, xPos){
 				return parseFloat(d.percent).toFixed(2) + "%";
 			});
 
-			
+	
+
+	//=======================================
+	//create software runnable piechart	
 	
 	//compute how many software that can be runned by this build
 	var pieData = [
@@ -483,8 +495,6 @@ function createStackedBarChart(pc, xPos){
 		}
 	}
 
-console.log(pc);
-console.log(pieData);
 	
 	//now create the associated pie chart
 	//Mike Bostock's Pie Chart, adapted for use here
@@ -549,6 +559,8 @@ function updateVis() {
 		firstRun = false;
 	}
 }
+
+
 
 function createButtons() {
 
