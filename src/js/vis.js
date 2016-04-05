@@ -36,7 +36,7 @@ var max_cpu_count = 2;
 
 //===============================
 var margin = {
-	top : 50,
+	top : 60,
 	left: 90,
 	bottom: 50,
 	right: 50
@@ -343,12 +343,17 @@ function createVis() {
 			.attr("visibility", "hidden");
 		
 	hover_menu.append("rect")
-		.attr("id", "hover-menu-box")
+		.attr("class", "hover-menu-box")
 		.attr("width", HOVER_MENU_PARAMS.width)
 		.attr("height", HOVER_MENU_PARAMS.height)
 		.attr("rx", HOVER_MENU_PARAMS.rx)
 		.attr("ry", HOVER_MENU_PARAMS.ry);
-		
+	
+	hover_menu.append("polygon")
+		.attr("class", "hover-menu-box")
+		.attr("transform", "translate(" + 0 + "," + HOVER_MENU_PARAMS.height + ")")
+		.attr("points", "5,-30 " +  "30,-5 " + 
+		((-1 * HOVER_MENU_PARAMS.mouse_offset_x)+ "," + HOVER_MENU_PARAMS.mouse_offset_y));
 		
 	//hover labels	
 	hover_menu.append("text")

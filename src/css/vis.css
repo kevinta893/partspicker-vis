@@ -31,18 +31,16 @@ svg {
 
 #hover-menu-group{}
 
-#hover-menu-box{
+.hover-menu-box{
 	fill: darkgrey;
 	opacity: 0.98;
 }
 
 .hover-menu-label{
-	
 }
 
 #hover-menu-button{
-	fill: ##F77C0C;
-
+	fill: #2D2D2D;
 }
 #hover-menu-button-label{
 	cursor: pointer;
@@ -50,6 +48,7 @@ svg {
 	fill: white;
 }
 #hover-menu-button:hover, #hover-menu-button-label:hover + #hover-menu-button{
+	cursor: pointer;
 } 
 
 #hover-menu-pc-name-label{
