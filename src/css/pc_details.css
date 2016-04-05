@@ -53,6 +53,7 @@ svg {
 }
 .summary-detail-value{
 	padding-top: 0.2em;
+	padding-left: 1em;
 }
 .summary-detail-value>a{
 	padding: 0.2em;
