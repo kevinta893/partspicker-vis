@@ -57,10 +57,24 @@ var MAX_RELATED_BUILDS_SHOW = 3;
 
 var divisionLines = [
 {
-	x:115,
+	x:145,
 	y:0,
 	width: 5,
 	height: height,
+	classAttr: "divider-line"
+},
+{
+	x:145 - 8,
+	y:-3,
+	width: 21,
+	height: 5,
+	classAttr: "divider-line"
+},
+{
+	x:145 - 8,
+	y: height-3,
+	width: 21,
+	height: 5,
 	classAttr: "divider-line"
 }
 ];
