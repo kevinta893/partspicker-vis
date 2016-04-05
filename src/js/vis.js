@@ -650,10 +650,13 @@ function createButtons() {
 			
 			xMin = ui.values[0];
 			xMax = ui.values[1];
-			$( "#range-label" ).text( "$" + ui.values[0] + " - $" + ui.values[1] );
+			$("#range-label").html( "$" + ui.values[0] + " - <br>$" + ui.values[1] );
 			updateVis();
 		}
 	});
+	
+	//initialize range label
+	$("#range-label").html("$" + SLIDER_PARAMETERS.min + " - <br>$" + SLIDER_PARAMETERS.max);
 
 	
 	var gpuCheckData = [
