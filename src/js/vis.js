@@ -70,18 +70,26 @@ var Y_AXIS_POSITION = {
 
 var HOVER_MENU_PARAMS ={
 	width: 200,
-	height: 100,
+	height: 115,
 	rx: 5,
 	ry: 5,
 	
 	
 	button_width: 90,
 	button_height: 30,	
-	button_pad_right: 3,
-	button_pad_bottom: 3,
+	button_rx: 2,
+	button_ry: 2,
+	button_pad_right: 5,
+	button_pad_bottom: 5,
 	
 	mouse_offset_x: 10,
-	mouse_offset_y: 10
+	mouse_offset_y: 10,
+	
+	label_padding_left: 5,
+	label_spacing_top: 17,
+	max_name_length: 21
+	
+	//see CSS for color and fill of hover menu
 };
 
 var SLIDER_PARAMETERS ={
@@ -336,43 +344,47 @@ function createVis() {
 		.attr("width", HOVER_MENU_PARAMS.width)
 		.attr("height", HOVER_MENU_PARAMS.height)
 		.attr("rx", HOVER_MENU_PARAMS.rx)
-		.attr(HOVER_MENU_PARAMS.ry);
+		.attr("ry", HOVER_MENU_PARAMS.ry);
 		
 		
 	//hover labels	
 	hover_menu.append("text")
 		.attr("class", "hover-menu-label")
 		.attr("id", "hover-menu-pc-name-label")
-		.attr("x", 0)
-		.attr("y", 15)
+		.attr("x", HOVER_MENU_PARAMS.label_padding_left)
+		.attr("y", 1 * HOVER_MENU_PARAMS.label_spacing_top)
 		.text("Build Name");	
 		
 	hover_menu.append("text")
 		.attr("class", "hover-menu-label")
 		.attr("id", "hover-menu-pc-cpu-detail")
-		.attr("x", 0)
-		.attr("y", 30)
+		.attr("x", HOVER_MENU_PARAMS.label_padding_left)
+		.attr("y", 2 * HOVER_MENU_PARAMS.label_spacing_top)
 		.text("CPU Score");	
 		
 	hover_menu.append("text")
 		.attr("class", "hover-menu-label")
 		.attr("id", "hover-menu-pc-gpu-detail")
-		.attr("x", 0)
-		.attr("y", 45)
+		.attr("x", HOVER_MENU_PARAMS.label_padding_left)
+		.attr("y", 3 * HOVER_MENU_PARAMS.label_spacing_top)
 		.text("GPU Score");
+		
 	hover_menu.append("text")
 		.attr("class", "hover-menu-label")
 		.attr("id", "hover-menu-pc-total-price")
-		.attr("x", 0)
-		.attr("y", 60)
+		.attr("x", HOVER_MENU_PARAMS.label_padding_left)
+		.attr("y", 4 * HOVER_MENU_PARAMS.label_spacing_top)
 		.text("Total Price");
+		
 	//hover button
 	hover_menu.append("rect")
 		.attr("id", "hover-menu-button")
 		.attr("x", HOVER_MENU_PARAMS.width - HOVER_MENU_PARAMS.button_width - HOVER_MENU_PARAMS.button_pad_right)
 		.attr("y", HOVER_MENU_PARAMS.height - HOVER_MENU_PARAMS.button_height - HOVER_MENU_PARAMS.button_pad_bottom)
 		.attr("width", HOVER_MENU_PARAMS.button_width)
-		.attr("height", HOVER_MENU_PARAMS.button_height);
+		.attr("height", HOVER_MENU_PARAMS.button_height)
+		.attr("rx", HOVER_MENU_PARAMS.button_rx)
+		.attr("ry", HOVER_MENU_PARAMS.button_rx);;
 		
 	hover_menu.append("text")
 		.attr("id", "hover-menu-button-label")
@@ -460,7 +472,7 @@ function updateVis() {
 			})
 			.attr("class", function(d){
 				if (d.total_gpus > 4) {console.log("Warning: too many GPUs"); console.log(d);}
-				return "gpu" + d.total_gpus;
+				return "pc-point " + "gpu" + d.total_gpus;
 			});
 	
 
@@ -493,7 +505,7 @@ function hideHoverMenu(){
 }
 
 function showHoverMenu(build_id, x, y){
-	var MAX_NAME_LENGTH = 20;
+	var MAX_NAME_LENGTH = HOVER_MENU_PARAMS.max_name_length;
 	var pc = getPC(build_id);
 
 	$("#hover-menu-group").attr("visibility", "visible");
