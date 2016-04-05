@@ -68,12 +68,15 @@ var Y_AXIS_POSITION = {
 	left: -1 * margin.left
 };
 
-var HOVER_MENU_SIZE ={
+var HOVER_MENU_PARAMS ={
 	width: 200,
 	height: 100,
+	rx: 5,
+	ry: 5,
+	
 	
 	button_width: 90,
-	button_height: 30,
+	button_height: 30,	
 	button_pad_right: 3,
 	button_pad_bottom: 3,
 	
@@ -330,8 +333,12 @@ function createVis() {
 		
 	hover_menu.append("rect")
 		.attr("id", "hover-menu-box")
-		.attr("width", HOVER_MENU_SIZE.width)
-		.attr("height", HOVER_MENU_SIZE.height);	
+		.attr("width", HOVER_MENU_PARAMS.width)
+		.attr("height", HOVER_MENU_PARAMS.height)
+		.attr("rx", HOVER_MENU_PARAMS.rx)
+		.attr(HOVER_MENU_PARAMS.ry);
+		
+		
 	//hover labels	
 	hover_menu.append("text")
 		.attr("class", "hover-menu-label")
@@ -362,15 +369,15 @@ function createVis() {
 	//hover button
 	hover_menu.append("rect")
 		.attr("id", "hover-menu-button")
-		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right)
-		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom)
-		.attr("width", HOVER_MENU_SIZE.button_width)
-		.attr("height", HOVER_MENU_SIZE.button_height);
+		.attr("x", HOVER_MENU_PARAMS.width - HOVER_MENU_PARAMS.button_width - HOVER_MENU_PARAMS.button_pad_right)
+		.attr("y", HOVER_MENU_PARAMS.height - HOVER_MENU_PARAMS.button_height - HOVER_MENU_PARAMS.button_pad_bottom)
+		.attr("width", HOVER_MENU_PARAMS.button_width)
+		.attr("height", HOVER_MENU_PARAMS.button_height);
 		
 	hover_menu.append("text")
 		.attr("id", "hover-menu-button-label")
-		.attr("x", HOVER_MENU_SIZE.width - HOVER_MENU_SIZE.button_width - HOVER_MENU_SIZE.button_pad_right + 1)
-		.attr("y", HOVER_MENU_SIZE.height - HOVER_MENU_SIZE.button_height - HOVER_MENU_SIZE.button_pad_bottom+15)
+		.attr("x", HOVER_MENU_PARAMS.width - HOVER_MENU_PARAMS.button_width - HOVER_MENU_PARAMS.button_pad_right + 1)
+		.attr("y", HOVER_MENU_PARAMS.height - HOVER_MENU_PARAMS.button_height - HOVER_MENU_PARAMS.button_pad_bottom+15)
 		.text("Build Details");
 		
 	//add event to click on graph background to hide hover
@@ -490,7 +497,7 @@ function showHoverMenu(build_id, x, y){
 	var pc = getPC(build_id);
 
 	$("#hover-menu-group").attr("visibility", "visible");
-	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_SIZE.mouse_offset_x)+ "," + (y - HOVER_MENU_SIZE.mouse_offset_y - HOVER_MENU_SIZE.height) + ")");
+	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_PARAMS.mouse_offset_x)+ "," + (y - HOVER_MENU_PARAMS.mouse_offset_y - HOVER_MENU_PARAMS.height) + ")");
 
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
 	$("#hover-menu-pc-name-label").text(pcNameTruncated);
