@@ -75,12 +75,15 @@ var HOVER_MENU_PARAMS ={
 	ry: 5,
 	
 	
-	button_width: 90,
+	button_width: 100,
 	button_height: 30,	
 	button_rx: 2,
 	button_ry: 2,
 	button_pad_right: 5,
 	button_pad_bottom: 5,
+	
+	button_label_padding_top: 19,
+	button_label_padding_left: 5,
 	
 	mouse_offset_x: 10,
 	mouse_offset_y: 10,
@@ -388,8 +391,8 @@ function createVis() {
 		
 	hover_menu.append("text")
 		.attr("id", "hover-menu-button-label")
-		.attr("x", HOVER_MENU_PARAMS.width - HOVER_MENU_PARAMS.button_width - HOVER_MENU_PARAMS.button_pad_right + 1)
-		.attr("y", HOVER_MENU_PARAMS.height - HOVER_MENU_PARAMS.button_height - HOVER_MENU_PARAMS.button_pad_bottom+15)
+		.attr("x", HOVER_MENU_PARAMS.width - HOVER_MENU_PARAMS.button_width - HOVER_MENU_PARAMS.button_pad_right + HOVER_MENU_PARAMS.button_label_padding_left)
+		.attr("y", HOVER_MENU_PARAMS.height - HOVER_MENU_PARAMS.button_height - HOVER_MENU_PARAMS.button_pad_bottom + HOVER_MENU_PARAMS.button_label_padding_top)
 		.text("Build Details");
 		
 	//add event to click on graph background to hide hover

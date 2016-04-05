@@ -41,15 +41,15 @@ svg {
 }
 
 #hover-menu-button{
-	fill: blue;
+	fill: #FF7A0C;
 
 }
 #hover-menu-button-label{
 	cursor: pointer;
+	font-weight: bold;
+	fill: white;
 }
-#hover-menu-button:hover, #hover-menu-button-label:hover~#hover-menu-button{
-	cursor: pointer;
-	fill: green;
+#hover-menu-button:hover, #hover-menu-button-label:hover + #hover-menu-button{
 } 
 
 #hover-menu-pc-name-label{
@@ -114,18 +114,10 @@ svg {
 	shape-rendering: crispEdges;
 }
 
-.button {
-	margin: 10px;
-	border: 1px dashed lightgray;
-}
-
-.button:hover {
-	background: lightgray;
-	cursor: pointer;
-}
 
 
 .pc-point{
+	cursor: pointer;
 	stroke: #000000;
 	stroke-width: 1;
 }
