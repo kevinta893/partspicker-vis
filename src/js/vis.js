@@ -55,6 +55,7 @@ var firstRun = true;
 //===============================
 //Asthetic controls
 var pointSize = 6;
+var MAX_Y_PADDING_PERCENT = 1.2;
 
 var X_AXIS_POSITION = {
 	top: 45,
@@ -403,6 +404,7 @@ function updateVis() {
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
 	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
+	maxValY *= MAX_Y_PADDING_PERCENT;
 	xScale.domain([xMin, xMax]);
 	yScale.domain([0, maxValY]);
 
