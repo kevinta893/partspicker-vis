@@ -529,6 +529,8 @@ function updateSoftwareReqList(build_id){
 	}
 	
 	new_software_list = new_software_list.sort(function(a,b){
+		var totalScoreA = a.rec_cpu_bench + a.rec_gpu_bench;
+		var totalScoreB = b.rec_cpu_bench + b.rec_gpu_bench;
 		
 		if (a.sort_priority > b.sort_priority) { 
 			return 1;
@@ -537,7 +539,16 @@ function updateSoftwareReqList(build_id){
 			return -1;
 		}
 		else{
-			return 0;
+			//tie breaker
+			if ( totalScoreA> totalScoreB){
+				return -1;
+			}
+			else if (totalScoreA < totalScoreB){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
 		
 	});

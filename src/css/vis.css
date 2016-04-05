@@ -130,47 +130,62 @@ svg {
 	fill: #2b83ba;
 	stroke: #000000;
 	stroke-width: 1;
+	opacity: 1.0;
 }
+
 .gpu1:hover{
 	fill: #2b83ba;
 	stroke: #ffff00;
 	stroke-width: 2;
+	opacity: 1.0;
+
 }
 
 .gpu2{
 	fill: #abdda4;
 	stroke: #000000;
 	stroke-width: 1;
+	opacity: 1.0;
+
 }
 
 .gpu2:hover{
 	fill: #abdda4;
 	stroke: #ffff00;
 	stroke-width: 2;
+	opacity: 1.0;
+
 }
 
 .gpu3{
 	fill: #fdae61;
 	stroke: #000000;
 	stroke-width: 1;
+	opacity: 1.0;
+
 }
 
 .gpu3:hover{
 	fill: #fdae61;
 	stroke: #ffff00;
 	stroke-width: 2;
+	opacity: 1.0;
+
 }
 
 .gpu4{
 	fill: #d7191c;
 	stroke: #000000;
 	stroke-width: 1;
+	opacity: 1.0;
 }
 
 .gpu4:hover{
 	fill: #d7191c;
 	stroke: #ffff00;
 	stroke-width: 2;
+	opacity: 1.0;
+
 }
 
 .gpuHidden{
