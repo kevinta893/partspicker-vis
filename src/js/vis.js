@@ -439,10 +439,10 @@ function updateVis() {
 	
 	//check the checkboxes to see if they have changed
 	var gpuEnabled = [
-		$("#gpucheckbox1").is(':checked'),
-		$("#gpucheckbox2").is(':checked'),
-		$("#gpucheckbox3").is(':checked'),
-		$("#gpucheckbox4").is(':checked')
+		$("#gpu-checkbox1").is(':checked'),
+		$("#gpu-checkbox2").is(':checked'),
+		$("#gpu-checkbox3").is(':checked'),
+		$("#gpu-checkbox4").is(':checked')
 	];
 		
 		
@@ -643,22 +643,36 @@ function createButtons() {
 
 	
 	var gpuCheckData = [
-		{id:"gpucheckbox1", label: "1"},
-		{id:"gpucheckbox2", label: "2"},
-		{id:"gpucheckbox3", label: "3"},
-		{id:"gpucheckbox4", label: "4"}
+		{id:"gpu-checkbox1", label: "1"},
+		{id:"gpu-checkbox2", label: "2"},
+		{id:"gpu-checkbox3", label: "3"},
+		{id:"gpu-checkbox4", label: "4"}
 	];
 	
 	var checkboxGroup = d3.select("#checkboxes").selectAll(".checkboxGroup")
 		.data(gpuCheckData)
 		.enter();
 	
+	checkboxGroup = checkboxGroup.append("div")
+	
+	//create a list group
+	checkboxGroup = checkboxGroup
+		.attr("class", "gpu-checkbox-div")
+		.attr("id", function(d){return "gpu-checkbox-label" + d.label;})
+		.on("click", function(d){
+			//change state of the checkbox
+			var checkedVal = $("#"+d.id).is(':checked');
+			$("#"+d.id).prop('checked', !checkedVal);
+			//run the update function
+			updateVis();
+		});
+		
 	checkboxGroup.append("label")
 		.html(function (d){
 			return d.label;
 		})
 		.append("input")
-			.attr("class", "gpuCheckbox")
+			.attr("class", "gpu-checkbox")
 			.attr("id", function(d){ return d.id;})
 			.attr("type", "checkbox")
 			.attr("checked", "true")
