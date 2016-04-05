@@ -195,7 +195,10 @@ svg {
 	fill: #5AFF52;
 }
 
-
+.pie-section-none:hover, .pie-section-min:hover, .pie-section-rec:hover{
+	stroke: black;
+	stroke-width: 2;
+}
 
 
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
