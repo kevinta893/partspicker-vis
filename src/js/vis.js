@@ -116,6 +116,9 @@ var MIN_REQ_ICON = "images/dash.png";
 var NO_REQ_ICON =  "images/cross.png";
 var NO_SELECT_ICON = "images/question.png";
 
+var CHECKBOX_CHECKED_IMG = "./images/checkbox-checked.png";
+var CHECKBOX_UNCHECKED_IMG = "./images/checkbox-unchecked.png";
+
 
 //runtime variables (change and update for effect)
 var xMax = max_price;
@@ -643,10 +646,10 @@ function createButtons() {
 
 	
 	var gpuCheckData = [
-		{id:"gpu-checkbox1", label: "1"},
-		{id:"gpu-checkbox2", label: "2"},
-		{id:"gpu-checkbox3", label: "3"},
-		{id:"gpu-checkbox4", label: "4"}
+		{id:"gpu-checkbox1", label: "1", value: 1},
+		{id:"gpu-checkbox2", label: "2", value: 2},
+		{id:"gpu-checkbox3", label: "3", value: 3},
+		{id:"gpu-checkbox4", label: "4", value: 4}
 	];
 	
 	var checkboxGroup = d3.select("#checkboxes").selectAll(".checkboxGroup")
@@ -663,6 +666,7 @@ function createButtons() {
 			//change state of the checkbox
 			var checkedVal = $("#"+d.id).is(':checked');
 			$("#"+d.id).prop('checked', !checkedVal);
+			$("#checkbox-img"+d.value).attr("src", !checkedVal ? CHECKBOX_CHECKED_IMG : CHECKBOX_UNCHECKED_IMG)
 			//run the update function
 			updateVis();
 		});
@@ -673,13 +677,16 @@ function createButtons() {
 		})
 		.append("input")
 			.attr("class", "gpu-checkbox")
-			.attr("id", function(d){ return d.id;})
+			.attr("id", function(d){ return d.id})
 			.attr("type", "checkbox")
 			.attr("checked", "true")
 			.on("change", function(d){
 				updateVis();
 			});
-	
+	checkboxGroup.append("img")
+		.attr("class", "checkbox-image")
+		.attr("id", function(d){ return "checkbox-img" + d.value;})
+		.attr("src", "./images/checkbox-checked.png");
 }
 
 

@@ -207,6 +207,7 @@ svg {
 }
 #checkboxes>div{
 	list-style-type: none;
+	cursor: pointer;
 }
 #checkbox-title{
 	font-weight: bold;
@@ -223,6 +224,14 @@ svg {
 .gpu-checkbox-div>label{
 	width: 100%;
 	font-weight: bold;
+	cursor: pointer;
+
+}
+
+.checkbox-image{
+	width: 16px;
+	height: 16px;
+	float: right;
 }
 
 #gpu-checkbox-label1{
@@ -240,6 +249,8 @@ svg {
 
 .gpu-checkbox{
 	float: right;
+	visibility: collapse;
+	width: 0px;
 }
 #gpu-checkbox1{
 }
