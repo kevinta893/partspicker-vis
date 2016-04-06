@@ -103,7 +103,6 @@ svg {
 
 .component{
 	width: 100%;
-	font-family: "Times New Roman";
 	border: 1px solid grey;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
@@ -112,6 +111,7 @@ svg {
 	font-weight: bold;
 }
 .component-name-label{
+
 	float: none;
 	word-wrap: break-word;
 	text-decoration: none;
