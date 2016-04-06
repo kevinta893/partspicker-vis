@@ -436,7 +436,6 @@ function createVis() {
 		return (index >= minIndex) && (index<= maxIndex) && (index != selfIndex);
 	});
 	
-	console.log(relatedBuilds);
 
 
 	
@@ -449,7 +448,6 @@ function createVis() {
 		var indexStep = relatedBuilds.length / (MAX_RELATED_BUILDS_SHOW +2);
 		indexStep *= (i+1);
 		indexStep = Math.floor(indexStep);
-		console.log(indexStep);
 		createStackedBarChart(relatedBuilds[indexStep], 200 + (i*120));
 	}
 	
