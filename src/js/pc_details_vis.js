@@ -445,7 +445,7 @@ function createVis() {
 	//create stacked bar charts for each related build
 	for (var i = 0; i < MAX_RELATED_BUILDS_SHOW ; i++){
 		
-		var indexStep = relatedBuilds.length / (MAX_RELATED_BUILDS_SHOW +2);
+		var indexStep = relatedBuilds.length / (MAX_RELATED_BUILDS_SHOW +1);
 		indexStep *= (i+1);
 		indexStep = Math.floor(indexStep);
 		createStackedBarChart(relatedBuilds[indexStep], 200 + (i*120));
