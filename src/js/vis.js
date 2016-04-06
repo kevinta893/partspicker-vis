@@ -534,7 +534,10 @@ function showHoverMenu(build_id, x, y){
 	$("#hover-menu-group").attr("transform", "translate(" + (x + HOVER_MENU_PARAMS.mouse_offset_x)+ "," + (y - HOVER_MENU_PARAMS.mouse_offset_y - HOVER_MENU_PARAMS.height) + ")");
 
 	var pcNameTruncated = pc.name.length >= MAX_NAME_LENGTH ? pc.name.substring(0, MAX_NAME_LENGTH) + "..." : pc.name;
+	var hoverText = document.createElement("title");
+	hoverText.innerHTML = pc.name;
 	$("#hover-menu-pc-name-label").text(pcNameTruncated);
+	$("#hover-menu-pc-name-label").append(hoverText);
 	$("#hover-menu-pc-cpu-detail").text("CPU Score: " + pc.total_cpu_score);
 	$("#hover-menu-pc-gpu-detail").text("GPU Score: " + pc.total_gpu_score);
 	$("#hover-menu-pc-total-price").text("Total Price: $" + pc.total_price);
