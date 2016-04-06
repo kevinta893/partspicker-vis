@@ -99,7 +99,7 @@ var HOVER_MENU_PARAMS ={
 	mouse_offset_y: 10,
 	
 	label_padding_left: 5,
-	label_spacing_top: 21,
+	label_spacing_top: 19,
 	
 	//see CSS for color and fill of hover menu
 };
@@ -664,7 +664,7 @@ function showHoverMenu(showText, x, y){
 	
 	//add text, resize box
 	$("#hover-menu-text").html(showText);
-	$("#hover-menu-box").attr("width", showText.length * 6.9);
+	$("#hover-menu-box").attr("width", showText.length * 6.5);
 	
 	$("#hover-menu-group").attr("visibility", "visible");
 

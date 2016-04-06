@@ -75,7 +75,7 @@ var HOVER_MENU_PARAMS ={
 	ry: 5,
 	
 	
-	button_width: 100,
+	button_width: 85,
 	button_height: 30,	
 	button_rx: 2,
 	button_ry: 2,
@@ -90,7 +90,7 @@ var HOVER_MENU_PARAMS ={
 	
 	label_padding_left: 5,
 	label_spacing_top: 17,
-	max_name_length: 21
+	max_name_length: 27
 	
 	//see CSS for color and fill of hover menu
 };

@@ -1,5 +1,6 @@
 body{
-	
+	font-family: 'Titillium Web';
+	font-size: 14px
 }
 
 #chart {
@@ -118,7 +119,7 @@ svg {
 }
 
 .software-label{
-	padding-top: 0.5em;
+	padding-top: 0.3em;
 }
 
 .xAxis path, .xAxis line, .yAxis path, .yAxis line {
