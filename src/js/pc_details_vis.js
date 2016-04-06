@@ -412,20 +412,45 @@ function setupPage(pc){
 
 function createVis() {
 	//get related builds to the selected build
-	var relatedBuilds = build_list.filter(function(ele, index, arr) {
-		var min = selected_build.total_price-1000;
-		var max = selected_build.total_price+1000;
-		return (ele.total_price >= min) && (ele.total_price <= max) && (ele.build_id != selected_build.build_id)
+	var relatedBuilds = build_list.sort(function(a,b){
+		var aPrice = parseFloat(a.total_price);
+		var bPrice = parseFloat(b.total_price);
+		if (aPrice < bPrice){
+			return -1;
+		}
+		else if(aPrice > bPrice){
+			return 1;
+		}
+		return 0;
 	});
 	
 	
+	var selfIndex = relatedBuilds.findIndex(function(ele, index, arr){
+		return ele.build_id == selected_build.build_id;
+	});
+	
+	//collect the nearest 100 builds upp and lower
+	relatedBuilds = relatedBuilds.filter(function(ele, index, arr) {
+		var minIndex = selfIndex-100;
+		var maxIndex = selfIndex+100;
+		return (index >= minIndex) && (index<= maxIndex) && (index != selfIndex);
+	});
+	
+	console.log(relatedBuilds);
+
+
 	
 	createStackedBarChart(selected_build, 0);		//make selected build bar chart
-	
+
 	
 	//create stacked bar charts for each related build
-	for (var i = 0; i < Math.min(relatedBuilds.length, MAX_RELATED_BUILDS_SHOW) ; i++){
-		createStackedBarChart(relatedBuilds[i], 200 + (i*120));
+	for (var i = 0; i < MAX_RELATED_BUILDS_SHOW ; i++){
+		
+		var indexStep = relatedBuilds.length / (MAX_RELATED_BUILDS_SHOW +2);
+		indexStep *= (i+1);
+		indexStep = Math.floor(indexStep);
+		console.log(indexStep);
+		createStackedBarChart(relatedBuilds[indexStep], 200 + (i*120));
 	}
 	
 	// recompute the max value for the x and y and size scales
