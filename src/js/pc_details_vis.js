@@ -395,7 +395,7 @@ function setupPage(pc){
 	pcComponents.append("div")
 		.attr("class", "component-price-label")
 		.html(function (d){
-			return "$" + d.part_price;
+			return isFinite(parseFloat(d.part_price)) ? ("$" + d.part_price) : "N/A";
 		});	
 		
 	pcComponents.append("div")
