@@ -41,7 +41,7 @@ var margin = {
 	bottom: 50,
 	right: 50
 };
-var width = Math.max($(window).width(), 500) * 0.55 - margin.left * 2;
+var width = Math.max($(window).width(), 1000) * 0.55 - margin.left * 2;
 var height = 500 - margin.top * 2;
 
 var xScale = d3.scale.linear().range([0, width]);
