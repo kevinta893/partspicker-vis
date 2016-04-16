@@ -108,6 +108,8 @@ var SLIDER_PARAMETERS ={
 	
 };
 
+var TOOLTIP_SHOWUP_DELAY = 0;
+
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
 
@@ -426,6 +428,8 @@ function createVis() {
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});		
 		
+	//apply tooltips to each software
+	addSoftwareListToolTips();
 	
 	hideHoverMenu();		//deactivate software menu
 
@@ -524,6 +528,8 @@ function hideHoverMenu(){
 			.select("img")
 			.attr("class", "software-icon")
 			.attr("src", NO_SELECT_ICON);	
+	//reapply tooltips
+	addSoftwareListToolTips();
 }
 
 function showHoverMenu(build_id, x, y){
@@ -557,7 +563,7 @@ function updateSoftwareReqList(build_id){
 	var new_software_list=[];
 	new_software_list = software_req_list;
 
-	
+	//Assign priorities for runnable
 	for (var i = 0 ; i < new_software_list.length; i++){
 		var software = new_software_list[i];
 
@@ -572,6 +578,7 @@ function updateSoftwareReqList(build_id){
 		}
 	}
 	
+	//sort by priority, then by total score
 	new_software_list = new_software_list.sort(function(a,b){
 		var totalScoreA = a.rec_cpu_bench + a.rec_gpu_bench;
 		var totalScoreB = b.rec_cpu_bench + b.rec_gpu_bench;
@@ -597,6 +604,7 @@ function updateSoftwareReqList(build_id){
 		
 	});
 	
+	//replace the software list
 	d3.select("#software-list").selectAll(".software").remove();
 	var softwareItem = d3.select("#software-list").selectAll(".software").data(new_software_list)
 		.enter()
@@ -632,30 +640,58 @@ function updateSoftwareReqList(build_id){
 	softwareItem.append("div")
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});
+		
+
+	//apply the Jquery UI tooltips again
+	addSoftwareListToolTips();
 }
 
+function addSoftwareListToolTips(){
+	//add tooltips
+	
+	$(".software-no-select").attr("title", "No pc selected. Select a PC from the chart.");
+	$(".software-no-run").attr("title", "Does not meet minimum requirments");
+	$(".software-run-min").attr("title", "Meets minimum requirments");
+	$(".software-run-rec").attr("title", "Meets recommended requirements");
+	$(document).tooltip({
+		show: { effect: "blind", duration: TOOLTIP_SHOWUP_DELAY }
+	});
+	
+}
 
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
-	$("#price-slider").slider({
-		range: true,
+	$("#price-slider").rangeSlider({
 		step: SLIDER_PARAMETERS.step,
-		min: SLIDER_PARAMETERS.min,
-		max: SLIDER_PARAMETERS.max,
-		values: [ SLIDER_PARAMETERS.init_lower_value, SLIDER_PARAMETERS.init_upper_value ],
+		bounds: {
+			min: SLIDER_PARAMETERS.min,
+			max: SLIDER_PARAMETERS.max,
+		},
+		defaultValues:{
+			min: SLIDER_PARAMETERS.init_lower_value, 
+			max: SLIDER_PARAMETERS.init_upper_value
+		},
 		slide: function( event, ui ) {
-			hideHoverMenu();
 			
-			if (ui.values[1] - ui.values[0] < SLIDER_PARAMETERS.min_diff){
-				return false;
-			}
-			
-			xMin = ui.values[0];
-			xMax = ui.values[1];
-			$("#range-label").html( "$" + ui.values[0] + " - <br>$" + ui.values[1] );
-			updateVis();
+		},
+		range: {
+			min: SLIDER_PARAMETERS.min_diff, 
+			max: SLIDER_PARAMETERS.max*2
 		}
+	});
+	
+	$("#price-slider").on("valuesChanging", function(e, data){
+		hideHoverMenu();
+			console.log(data);
+		if (data.values.max - data.values.min < SLIDER_PARAMETERS.min_diff){
+			return false;
+		}
+		
+		xMin = data.values.min;
+		xMax = data.values.max;
+		$("#range-label").html( "$" + data.values.min + " - <br>$" + data.values.max );
+		updateVis();
 	});
 	
 	//initialize range label
