@@ -108,6 +108,8 @@ var SLIDER_PARAMETERS ={
 	
 };
 
+var TOOLTIP_SHOWUP_DELAY = 0;
+
 var X_AXIS_LABEL = "Total Price (USD)";
 var Y_AXIS_LABEL = "Passmark 3D Score";
 
@@ -426,6 +428,8 @@ function createVis() {
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});		
 		
+	//apply tooltips to each software
+	addSoftwareListToolTips();
 	
 	hideHoverMenu();		//deactivate software menu
 
@@ -557,7 +561,7 @@ function updateSoftwareReqList(build_id){
 	var new_software_list=[];
 	new_software_list = software_req_list;
 
-	
+	//Assign priorities for runnable
 	for (var i = 0 ; i < new_software_list.length; i++){
 		var software = new_software_list[i];
 
@@ -572,6 +576,7 @@ function updateSoftwareReqList(build_id){
 		}
 	}
 	
+	//sort by priority, then by total score
 	new_software_list = new_software_list.sort(function(a,b){
 		var totalScoreA = a.rec_cpu_bench + a.rec_gpu_bench;
 		var totalScoreB = b.rec_cpu_bench + b.rec_gpu_bench;
@@ -597,6 +602,7 @@ function updateSoftwareReqList(build_id){
 		
 	});
 	
+	//replace the software list
 	d3.select("#software-list").selectAll(".software").remove();
 	var softwareItem = d3.select("#software-list").selectAll(".software").data(new_software_list)
 		.enter()
@@ -632,8 +638,19 @@ function updateSoftwareReqList(build_id){
 	softwareItem.append("div")
 		.attr("class", "software-label")
 		.html(function(d){ return d.name;});
+		
+
+	//apply the Jquery UI tooltips again
+	addSoftwareListToolTips();
 }
 
+function addSoftwareListToolTips(){
+	//add tooltips
+	$(".software-no-select").tooltip({
+		content: "No pc selected. Select a PC from the chart.",
+		duration: TOOLTIP_SHOWUP_DELAY
+	});
+}
 
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
