@@ -528,6 +528,8 @@ function hideHoverMenu(){
 			.select("img")
 			.attr("class", "software-icon")
 			.attr("src", NO_SELECT_ICON);	
+	//reapply tooltips
+	addSoftwareListToolTips();
 }
 
 function showHoverMenu(build_id, x, y){
