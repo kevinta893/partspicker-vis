@@ -646,33 +646,50 @@ function updateSoftwareReqList(build_id){
 
 function addSoftwareListToolTips(){
 	//add tooltips
-	$(".software-no-select").tooltip({
-		content: "No pc selected. Select a PC from the chart.",
-		duration: TOOLTIP_SHOWUP_DELAY
+	
+	$(".software-no-select").attr("title", "No pc selected. Select a PC from the chart.");
+	$(".software-no-run").attr("title", "Does not meet minimum requirments");
+	$(".software-run-min").attr("title", "Meets minimum requirments");
+	$(".software-run-rec").attr("title", "Meets recommended requirements");
+	$(document).tooltip({
+		show: { effect: "blind", duration: TOOLTIP_SHOWUP_DELAY }
 	});
+	
 }
 
 // this function is to demonstrate how we can bind anything to html elements, not just data!
 function createButtons() {
 
-	$("#price-slider").slider({
-		range: true,
+	$("#price-slider").rangeSlider({
 		step: SLIDER_PARAMETERS.step,
-		min: SLIDER_PARAMETERS.min,
-		max: SLIDER_PARAMETERS.max,
-		values: [ SLIDER_PARAMETERS.init_lower_value, SLIDER_PARAMETERS.init_upper_value ],
+		bounds: {
+			min: SLIDER_PARAMETERS.min,
+			max: SLIDER_PARAMETERS.max,
+		},
+		defaultValues:{
+			min: SLIDER_PARAMETERS.init_lower_value, 
+			max: SLIDER_PARAMETERS.init_upper_value
+		},
 		slide: function( event, ui ) {
-			hideHoverMenu();
 			
-			if (ui.values[1] - ui.values[0] < SLIDER_PARAMETERS.min_diff){
-				return false;
-			}
-			
-			xMin = ui.values[0];
-			xMax = ui.values[1];
-			$("#range-label").html( "$" + ui.values[0] + " - <br>$" + ui.values[1] );
-			updateVis();
+		},
+		range: {
+			min: SLIDER_PARAMETERS.min_diff, 
+			max: SLIDER_PARAMETERS.max*2
 		}
+	});
+	
+	$("#price-slider").on("valuesChanging", function(e, data){
+		hideHoverMenu();
+			console.log(data);
+		if (data.values.max - data.values.min < SLIDER_PARAMETERS.min_diff){
+			return false;
+		}
+		
+		xMin = data.values.min;
+		xMax = data.values.max;
+		$("#range-label").html( "$" + data.values.min + " - <br>$" + data.values.max );
+		updateVis();
 	});
 	
 	//initialize range label

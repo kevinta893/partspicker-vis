@@ -30,12 +30,19 @@ svg {
 	height: 500px;
 }
 
+#software-legend{
+	width: 300px;
+	float: left;
+}
+
 #sidebar{
 	width: 300px;
 	float: left;
 }
 
-
+#slider-box{
+	padding-top: 30px;
+}
 
 #slider{
 	margin-top: 20px;
