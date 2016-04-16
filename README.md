@@ -18,3 +18,6 @@ Some computer builds have been filtered out for the utility of the visualization
 * Storage (≥1)
 
 Currently, the visualization runs best on Chrome.
+
+## Demo
+See my visualization hosted on Github Pages: [Click Here](http://kevinta893.github.io/partspicker-vis/partspicker.html)
