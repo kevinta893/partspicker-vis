@@ -41,7 +41,7 @@ var margin = {
 	bottom: 50,
 	right: 50
 };
-var width = 1000 - margin.left * 2;
+var width = Math.max($(window).width(), 500) * 0.55 - margin.left * 2;
 var height = 500 - margin.top * 2;
 
 var xScale = d3.scale.linear().range([0, width]);
@@ -96,7 +96,7 @@ var HOVER_MENU_PARAMS ={
 };
 
 var SLIDER_PARAMETERS ={
-	width: 300,
+	width: 600,
 	height: 200,
 	
 	step: 50,
@@ -431,7 +431,7 @@ function createVis() {
 
 }
 
-function updateVis() {
+function updateVis() {	
 	// recompute the max value for the x and y and size scales
 	var maxValX = d3.max(build_list, function (d) { return +d.total_price;});
 	var maxValY = d3.max(build_list, function (d) { return +d.total_gpu_score;});
@@ -660,7 +660,7 @@ function createButtons() {
 	
 	//initialize range label
 	$("#range-label").html("$" + SLIDER_PARAMETERS.min + " - <br>$" + SLIDER_PARAMETERS.max);
-
+	$("#price-slider").width(width);
 	
 	var gpuCheckData = [
 		{id:"gpu-checkbox1", label: "1", value: 1},
